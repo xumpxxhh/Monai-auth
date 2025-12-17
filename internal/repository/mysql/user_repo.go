@@ -1,0 +1,103 @@
+package mysql
+
+import (
+	"context"
+	"errors"
+	"fmt"
+	"time"
+
+	"gorm.io/gorm"
+
+	"monai-auth/internal/domain"
+)
+
+// GORMUserRepository 实现了 domain.UserRepository 接口
+type GORMUserRepository struct {
+	DB *gorm.DB
+}
+
+// NewGORMUserRepository 创建一个新的 GORM 仓库实例
+func NewGORMUserRepository(db *gorm.DB) *GORMUserRepository {
+	return &GORMUserRepository{DB: db}
+}
+
+// mapGORMToDomain 将 GORM 模型转换为领域模型
+func mapGORMToDomain(gormUser *UserGORM) *domain.User {
+	// 假设 domain.User 结构仅包含鉴权服务所需的核心字段
+	return &domain.User{
+		ID:           gormUser.ID,
+		Username:     gormUser.Username,
+		Email:        gormUser.Email,
+		PasswordHash: gormUser.PasswordHash,
+	}
+}
+
+// FindByID 根据 ID 查找用户
+func (r *GORMUserRepository) FindByID(ctx context.Context, id string) (*domain.User, error) {
+	var userGORM UserGORM
+
+	// GORM 的 First 方法会自动添加 WHERE deleted_at IS NULL
+	result := r.DB.WithContext(ctx).Where("id = ?", id).First(&userGORM)
+
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return nil, domain.ErrUserNotFound
+		}
+		return nil, fmt.Errorf("gorm find by ID failed: %w", result.Error)
+	}
+
+	return mapGORMToDomain(&userGORM), nil
+}
+
+// FindByEmail 根据 Email 查找用户
+func (r *GORMUserRepository) FindByEmail(ctx context.Context, email string) (*domain.User, error) {
+	var userGORM UserGORM
+
+	// GORM 的 First 方法会自动添加 WHERE deleted_at IS NULL
+	result := r.DB.WithContext(ctx).Where("email = ?", email).First(&userGORM)
+
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return nil, domain.ErrUserNotFound
+		}
+		return nil, fmt.Errorf("gorm find by email failed: %w", result.Error)
+	}
+
+	return mapGORMToDomain(&userGORM), nil
+}
+
+// CreateUser 创建新用户
+func (r *GORMUserRepository) CreateUser(ctx context.Context, user *domain.User) error {
+	// 将 domain.User 转换为 GORM 模型以便插入
+	userGORM := UserGORM{
+		Username:     user.Email, // 假设 username 默认为 email
+		Email:        user.Email,
+		PasswordHash: user.PasswordHash,
+		Status:       "1", // 默认状态 '1'
+		LastLoginAt:  time.Now(),
+	}
+
+	result := r.DB.WithContext(ctx).Create(&userGORM)
+
+	if result.Error != nil {
+		// 检查是否是唯一约束冲突 (GORM通常会包装底层的 MySQL 错误)
+		if isDuplicateEntryError(result.Error) {
+			return domain.ErrUserExists
+		}
+		return fmt.Errorf("gorm create user failed: %w", result.Error)
+	}
+
+	// 将生成的 ID 更新回领域模型
+	user.ID = userGORM.ID
+	return nil
+}
+
+// isDuplicateEntryError 检查 GORM 错误是否是 MySQL 唯一约束冲突 (错误码 1062)
+func isDuplicateEntryError(err error) bool {
+	// GORM 错误通常需要解包才能获取底层驱动错误
+	if errors.Is(err, gorm.ErrDuplicatedKey) {
+		return true
+	}
+	// 复杂的错误检查可能需要导入 go-sql-driver/mysql 并检查 *mysql.MySQLError.Number == 1062
+	return false
+}
