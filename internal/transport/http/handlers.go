@@ -15,6 +15,10 @@ import (
 type Handler struct {
 	AuthService auth.Service
 }
+type UserInfoResponse struct {
+	ID   int64  `json:"id"`
+	Role string `json:"role"`
+}
 
 func NewHandler(authService auth.Service) *Handler {
 	return &Handler{AuthService: authService}
@@ -60,8 +64,23 @@ func (h *Handler) ValidateHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	// 返回验证成功的用户ID和角色，供调用方使用
-	json.NewEncoder(w).Encode(map[string]string{
-		"user_id": user.ID,
-		"role":    user.Role,
+	json.NewEncoder(w).Encode(UserInfoResponse{
+		user.ID,
+		user.Role,
 	})
+}
+
+// RegisterHandler 处理注册请求
+func (h *Handler) RegisterHandler(w http.ResponseWriter, r *http.Request) {
+	var req domain.RegisterRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+	_, err := h.AuthService.Register(r.Context(), req)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("User registration failed: %v", err), http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(http.StatusCreated)
 }

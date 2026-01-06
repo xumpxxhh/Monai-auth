@@ -17,11 +17,10 @@ type InMemoryUserRepo struct {
 func NewInMemoryUserRepo() *InMemoryUserRepo {
 	// 预设一个测试用户
 	initialUser := &domain.User{
-		ID:           "test-user-id",
 		Email:        "test@example.com",
 		PasswordHash: "$2a$10$w1qZ3gKz0gL8b/Q/hXjU0.Q/hXjU0.Q/hXjU0.Q/hXjU0.Q/hXjU0.Q/hXjU0.Q/hXjU0.Q", // 密码: password123
 		Role:         "admin",
-		CreatedAt:    time.Now().Unix(),
+		CreatedAt:    time.Now(),
 	}
 	return &InMemoryUserRepo{
 		users: map[string]*domain.User{
@@ -30,7 +29,7 @@ func NewInMemoryUserRepo() *InMemoryUserRepo {
 	}
 }
 
-func (r *InMemoryUserRepo) FindByID(ctx context.Context, id string) (*domain.User, error) {
+func (r *InMemoryUserRepo) FindByID(ctx context.Context, id int64) (*domain.User, error) {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
 	for _, user := range r.users {

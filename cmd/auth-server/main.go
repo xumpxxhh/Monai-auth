@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
-	n_http "net/http"
+	"net/http"
 	"time"
 
 	"github.com/go-chi/chi/v5"
@@ -13,7 +13,7 @@ import (
 
 	"monai-auth/internal/auth"
 	userrepo "monai-auth/internal/repository/mysql" // 明确地使用别名 userrepo
-	"monai-auth/internal/transport/http"
+	httptransport "monai-auth/internal/transport/http"
 )
 
 // Config 结构体映射 config.yaml
@@ -61,7 +61,6 @@ func main() {
 	if err := viper.ReadInConfig(); err != nil {
 		log.Fatalf("Error reading config file: %v", err)
 	}
-
 	var cfg Config
 	if err := viper.Unmarshal(&cfg); err != nil {
 		log.Fatalf("Unable to decode config into struct: %v", err)
@@ -82,17 +81,19 @@ func main() {
 	authService := auth.NewAuthService(userRepo, tokenService)
 
 	// 传输层 (Handler)
-	httpHandler := http.NewHandler(authService)
+	httpHandler := httptransport.NewHandler(authService)
 
 	// 3. 配置 HTTP 路由
 	r := chi.NewRouter()
+	r.Use(httptransport.LoggerMiddleware)
 	r.Post("/api/v1/auth/login", httpHandler.LoginHandler)
 	r.Get("/api/v1/auth/validate", httpHandler.ValidateHandler)
+	r.Post("/api/v1/auth/register", httpHandler.RegisterHandler)
 
 	// 4. 启动服务
 	addr := fmt.Sprintf(":%s", cfg.Server.Port)
 	log.Printf("Auth Service starting on %s", addr)
-	if err := n_http.ListenAndServe(addr, r); err != nil {
+	if err := http.ListenAndServe(addr, r); err != nil {
 		log.Fatalf("Could not start server: %v", err)
 	}
 }

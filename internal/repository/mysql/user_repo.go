@@ -33,7 +33,7 @@ func mapGORMToDomain(gormUser *UserGORM) *domain.User {
 }
 
 // FindByID 根据 ID 查找用户
-func (r *GORMUserRepository) FindByID(ctx context.Context, id string) (*domain.User, error) {
+func (r *GORMUserRepository) FindByID(ctx context.Context, id int64) (*domain.User, error) {
 	var userGORM UserGORM
 
 	// GORM 的 First 方法会自动添加 WHERE deleted_at IS NULL
@@ -66,15 +66,32 @@ func (r *GORMUserRepository) FindByEmail(ctx context.Context, email string) (*do
 	return mapGORMToDomain(&userGORM), nil
 }
 
+// ExistsByEmail 检查指定 email 是否已存在
+func (r *GORMUserRepository) ExistsByEmail(ctx context.Context, email string) (bool, error) {
+	var count int64
+	err := r.DB.WithContext(ctx).
+		Model(&UserGORM{}).
+		Where("email = ?", email).
+		Count(&count).Error
+
+	if err != nil {
+		return false, fmt.Errorf("check email existence failed: %w", err)
+	}
+
+	return count > 0, nil
+}
+
 // CreateUser 创建新用户
 func (r *GORMUserRepository) CreateUser(ctx context.Context, user *domain.User) error {
 	// 将 domain.User 转换为 GORM 模型以便插入
 	userGORM := UserGORM{
-		Username:     user.Email, // 假设 username 默认为 email
+		Username:     user.Username, // 假设 username 默认为 email
 		Email:        user.Email,
 		PasswordHash: user.PasswordHash,
-		Status:       "1", // 默认状态 '1'
+		Status:       "active", // 默认状态 'active'
 		LastLoginAt:  time.Now(),
+		CreatedAt:    time.Now(),
+		UpdatedAt:    time.Now(),
 	}
 
 	result := r.DB.WithContext(ctx).Create(&userGORM)

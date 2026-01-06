@@ -9,14 +9,14 @@ import (
 
 // Claims 定义了 JWT 的负载 (Payload)
 type Claims struct {
-	UserID string `json:"user_id"`
+	UserID int64  `json:"user_id"`
 	Role   string `json:"role"`
 	jwt.RegisteredClaims
 }
 
 // TokenService 定义了令牌操作接口
 type TokenService interface {
-	GenerateToken(userID, role string) (string, error)
+	GenerateToken(userID int64, role string) (string, error)
 	ValidateToken(tokenString string) (*Claims, error)
 }
 
@@ -34,7 +34,7 @@ func NewJWTService(secret string, expiry time.Duration) TokenService {
 }
 
 // GenerateToken 生成 JWT
-func (s *jwtService) GenerateToken(userID, role string) (string, error) {
+func (s *jwtService) GenerateToken(userID int64, role string) (string, error) {
 	claims := Claims{
 		UserID: userID,
 		Role:   role,

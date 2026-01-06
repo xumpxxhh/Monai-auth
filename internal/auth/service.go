@@ -13,7 +13,7 @@ import (
 // Service 定义了鉴权服务的核心业务接口
 type Service interface {
 	Login(ctx context.Context, req domain.LoginRequest) (string, error)
-	Register(ctx context.Context, email, password string) (string, error)
+	Register(ctx context.Context, req domain.RegisterRequest) (int64, error)
 	Validate(ctx context.Context, tokenString string) (*domain.User, error)
 }
 
@@ -56,20 +56,25 @@ func (s *authService) Login(ctx context.Context, req domain.LoginRequest) (strin
 }
 
 // Register 处理用户注册逻辑 (简化版)
-func (s *authService) Register(ctx context.Context, email, password string) (string, error) {
-	// 检查用户是否已存在... (省略)
-
-	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+func (s *authService) Register(ctx context.Context, req domain.RegisterRequest) (int64, error) {
+	// 检查用户是否已存在
+	isExist, err := s.repo.ExistsByEmail(ctx, req.Email)
+	if err != nil {
+		return -1, err
+	}
+	if isExist {
+		return -1, errors.New("user already exists")
+	}
+	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 
 	newUser := &domain.User{
-		ID:           "new-id-123", // 实际应用中由DB生成
-		Email:        email,
+		Email:        req.Email,
 		PasswordHash: string(hashedPassword),
 		Role:         "standard",
 	}
 
 	if err := s.repo.CreateUser(ctx, newUser); err != nil {
-		return "", err
+		return -1, err
 	}
 	return newUser.ID, nil
 }
