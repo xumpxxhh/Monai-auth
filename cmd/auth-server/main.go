@@ -19,9 +19,10 @@ import (
 // Config 结构体映射 config.yaml
 type Config struct {
 	Server struct {
-		Port               string `mapstructure:"port"`
-		JWTSecret          string `mapstructure:"jwt_secret"`
-		JWTExpirationHours int    `mapstructure:"jwt_expiration_hours"`
+		Port               string   `mapstructure:"port"`
+		JWTSecret          string   `mapstructure:"jwt_secret"`
+		JWTExpirationHours int      `mapstructure:"jwt_expiration_hours"`
+		AllowedOrigins     []string `mapstructure:"allowed_origins"`
 	} `mapstructure:"server"`
 	Database struct {
 		Host     string `mapstructure:"host"`
@@ -30,6 +31,23 @@ type Config struct {
 		Password string `mapstructure:"password"`
 		DBName   string `mapstructure:"dbname"`
 	} `mapstructure:"database"`
+}
+
+// validateConfig 校验必填配置项
+func validateConfig(cfg Config) error {
+	if cfg.Server.Port == "" {
+		return fmt.Errorf("server.port is required")
+	}
+	if cfg.Server.JWTSecret == "" {
+		return fmt.Errorf("server.jwt_secret is required and must be non-empty")
+	}
+	if cfg.Server.JWTExpirationHours < 1 || cfg.Server.JWTExpirationHours > 720 {
+		return fmt.Errorf("server.jwt_expiration_hours must be between 1 and 720")
+	}
+	if cfg.Database.Host == "" || cfg.Database.Port == "" || cfg.Database.User == "" || cfg.Database.DBName == "" {
+		return fmt.Errorf("database host, port, user, dbname are required")
+	}
+	return nil
 }
 
 // initDB 初始化并返回 GORM 数据库连接
@@ -53,10 +71,10 @@ func initDB(cfg Config) *gorm.DB {
 }
 
 func main() {
-	// ... 配置加载逻辑保持不变 ...
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
 	viper.AddConfigPath("./configs")
+	viper.AutomaticEnv() // 环境变量可覆盖配置文件
 
 	if err := viper.ReadInConfig(); err != nil {
 		log.Fatalf("Error reading config file: %v", err)
@@ -65,9 +83,12 @@ func main() {
 	if err := viper.Unmarshal(&cfg); err != nil {
 		log.Fatalf("Unable to decode config into struct: %v", err)
 	}
+	if err := validateConfig(cfg); err != nil {
+		log.Fatalf("Invalid config: %v", err)
+	}
 
 	// 2. 初始化数据库和依赖注入 (DI)
-	gormDB := initDB(cfg) // 初始化 GORM 连接
+	gormDB := initDB(cfg)
 
 	// 仓库层 (Repository)
 	// 使用 userrepo 别名
@@ -86,7 +107,11 @@ func main() {
 	// 3. 配置 HTTP 路由
 	r := chi.NewRouter()
 	r.Use(httptransport.LoggerMiddleware)
+	if len(cfg.Server.AllowedOrigins) > 0 {
+		r.Use(httptransport.CORSMiddleware(cfg.Server.AllowedOrigins))
+	}
 	r.Post("/api/v1/auth/login", httpHandler.LoginHandler)
+	r.Post("/api/v1/auth/logout", httpHandler.LogoutHandler)
 	r.Get("/api/v1/auth/validate", httpHandler.ValidateHandler)
 	r.Post("/api/v1/auth/register", httpHandler.RegisterHandler)
 

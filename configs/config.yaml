@@ -3,6 +3,9 @@ server:
   port: 8888
   jwt_secret: "your_very_secret_key_for_jwt_signing"
   jwt_expiration_hours: 24
+  # 允许跨域访问的前端域名列表，例如前端运行在 http://localhost:3000
+  allowed_origins:
+    - "http://localhost:5173"
 
 database:
   host: localhost

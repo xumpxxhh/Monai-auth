@@ -55,19 +55,30 @@ func (s *authService) Login(ctx context.Context, req domain.LoginRequest) (strin
 	return token, nil
 }
 
-// Register 处理用户注册逻辑 (简化版)
+// Register 处理用户注册逻辑
 func (s *authService) Register(ctx context.Context, req domain.RegisterRequest) (int64, error) {
+	if err := domain.ValidateRegisterRequest(req); err != nil {
+		return -1, err
+	}
 	// 检查用户是否已存在
 	isExist, err := s.repo.ExistsByEmail(ctx, req.Email)
 	if err != nil {
 		return -1, err
 	}
 	if isExist {
-		return -1, errors.New("user already exists")
+		return -1, domain.ErrEmailExists
 	}
-	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
+	username := req.Username
+	if username == "" {
+		username = req.Email
+	}
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return -1, fmt.Errorf("password hash failed: %w", err)
+	}
 
 	newUser := &domain.User{
+		Username:     username,
 		Email:        req.Email,
 		PasswordHash: string(hashedPassword),
 		Role:         "standard",

@@ -5,15 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="25ebd6f5-516f-4406-a010-d3fd6e807886" name="更改" comment="">
-      <change beforePath="$PROJECT_DIR$/cmd/auth-server/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/auth-server/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/configs/config.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/configs/config.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/auth/service.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/auth/service.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/auth/token.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/auth/token.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/domain/repository.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/domain/repository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/domain/user.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/domain/user.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/repository/mysql/user_repo.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/repository/mysql/user_repo.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/transport/http/handlers.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/transport/http/handlers.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/transport/http/middleware.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/transport/http/middleware.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -39,33 +31,33 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "DefaultGoTemplateProperty": "Go File",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.GoLinterPluginOnboarding": "true",
-    "RunOnceActivity.GoLinterPluginStorageMigration": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.go.formatter.settings.were.checked": "true",
-    "RunOnceActivity.go.migrated.go.modules.settings": "true",
-    "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
-    "com.github.patou.gitmoji.display-icon": "emoji",
-    "com.github.patou.gitmoji.text-after-unicode": ":",
-    "com.github.patou.gitmoji.use-unicode": "true",
-    "git-widget-placeholder": "master",
-    "go.import.settings.migrated": "true",
-    "go.sdk.automatically.set": "true",
-    "junie.onboarding.icon.badge.shown": "true",
-    "last_opened_file_path": "C:/Users/84938",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.standard": "",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "com.github.patou.gitmoji.config",
-    "to.speed.mode.migration.done": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultGoTemplateProperty&quot;: &quot;Go File&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.GoLinterPluginOnboarding&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.GoLinterPluginStorageMigration&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.migrated.go.modules.settings&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.modules.go.list.on.any.changes.was.set&quot;: &quot;true&quot;,
+    &quot;com.github.patou.gitmoji.display-icon&quot;: &quot;emoji&quot;,
+    &quot;com.github.patou.gitmoji.text-after-unicode&quot;: &quot;:&quot;,
+    &quot;com.github.patou.gitmoji.use-unicode&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
+    &quot;go.sdk.automatically.set&quot;: &quot;true&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/84938&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.standard&quot;: &quot;&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.github.patou.gitmoji.config&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>

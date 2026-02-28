@@ -23,12 +23,13 @@ func NewGORMUserRepository(db *gorm.DB) *GORMUserRepository {
 
 // mapGORMToDomain 将 GORM 模型转换为领域模型
 func mapGORMToDomain(gormUser *UserGORM) *domain.User {
-	// 假设 domain.User 结构仅包含鉴权服务所需的核心字段
 	return &domain.User{
 		ID:           gormUser.ID,
 		Username:     gormUser.Username,
 		Email:        gormUser.Email,
 		PasswordHash: gormUser.PasswordHash,
+		Role:         "standard",
+		CreatedAt:    gormUser.CreatedAt,
 	}
 }
 
@@ -83,12 +84,15 @@ func (r *GORMUserRepository) ExistsByEmail(ctx context.Context, email string) (b
 
 // CreateUser 创建新用户
 func (r *GORMUserRepository) CreateUser(ctx context.Context, user *domain.User) error {
-	// 将 domain.User 转换为 GORM 模型以便插入
+	username := user.Username
+	if username == "" {
+		username = user.Email
+	}
 	userGORM := UserGORM{
-		Username:     user.Username, // 假设 username 默认为 email
+		Username:     username,
 		Email:        user.Email,
 		PasswordHash: user.PasswordHash,
-		Status:       "active", // 默认状态 'active'
+		Status:       "active",
 		LastLoginAt:  time.Now(),
 		CreatedAt:    time.Now(),
 		UpdatedAt:    time.Now(),
@@ -97,14 +101,12 @@ func (r *GORMUserRepository) CreateUser(ctx context.Context, user *domain.User) 
 	result := r.DB.WithContext(ctx).Create(&userGORM)
 
 	if result.Error != nil {
-		// 检查是否是唯一约束冲突 (GORM通常会包装底层的 MySQL 错误)
 		if isDuplicateEntryError(result.Error) {
-			return domain.ErrUserExists
+			return domain.ErrEmailExists
 		}
 		return fmt.Errorf("gorm create user failed: %w", result.Error)
 	}
 
-	// 将生成的 ID 更新回领域模型
 	user.ID = userGORM.ID
 	return nil
 }
