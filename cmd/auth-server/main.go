@@ -16,13 +16,24 @@ import (
 	httptransport "monai-auth/internal/transport/http"
 )
 
+// ClientConfig 子应用（客户端）配置
+type ClientConfig struct {
+	ClientID             string   `mapstructure:"client_id"`
+	ClientSecret         string   `mapstructure:"client_secret"`
+	AllowedRedirectURIs  []string `mapstructure:"allowed_redirect_uris"`
+}
+
 // Config 结构体映射 config.yaml
 type Config struct {
 	Server struct {
-		Port               string   `mapstructure:"port"`
-		JWTSecret          string   `mapstructure:"jwt_secret"`
-		JWTExpirationHours int      `mapstructure:"jwt_expiration_hours"`
-		AllowedOrigins     []string `mapstructure:"allowed_origins"`
+		Port                string         `mapstructure:"port"`
+		JWTSecret           string         `mapstructure:"jwt_secret"`
+		JWTExpirationHours  int            `mapstructure:"jwt_expiration_hours"`
+		AllowedOrigins      []string       `mapstructure:"allowed_origins"`
+		AuthBaseURL         string         `mapstructure:"auth_base_url"`
+		LoginPagePath       string         `mapstructure:"login_page_path"`
+		AllowedRedirectURIs []string       `mapstructure:"allowed_redirect_uris"`
+		Clients             []ClientConfig `mapstructure:"clients"`
 	} `mapstructure:"server"`
 	Database struct {
 		Host     string `mapstructure:"host"`
@@ -101,8 +112,37 @@ func main() {
 	// 核心鉴权服务 (Service)
 	authService := auth.NewAuthService(userRepo, tokenService)
 
+	// SSO state 与 授权码 存储
+	stateStore := auth.NewMemoryStateStore(10 * time.Minute)
+	codeStore := auth.NewMemoryCodeStore(5 * time.Minute)
+	loginPagePath := cfg.Server.LoginPagePath
+	if loginPagePath == "" {
+		loginPagePath = "/monai/login"
+	}
+	// 将配置中的 clients 转为 transport 层使用的 Client
+	clients := make([]httptransport.Client, 0, len(cfg.Server.Clients))
+	for _, c := range cfg.Server.Clients {
+		clients = append(clients, httptransport.Client{
+			ClientID:            c.ClientID,
+			ClientSecret:       c.ClientSecret,
+			AllowedRedirectURIs: c.AllowedRedirectURIs,
+		})
+	}
+
+	authBaseURL := cfg.Server.AuthBaseURL
+	if authBaseURL == "" {
+		authBaseURL = "http://localhost:" + cfg.Server.Port
+	}
 	// 传输层 (Handler)
-	httpHandler := httptransport.NewHandler(authService)
+	httpHandler := httptransport.NewHandler(authService, &httptransport.HandlerOpts{
+		StateStore:           stateStore,
+		CodeStore:            codeStore,
+		LoginPagePath:        loginPagePath,
+		AuthBaseURL:          authBaseURL,
+		AllowedRedirectURIs:  cfg.Server.AllowedRedirectURIs,
+		Clients:              clients,
+		AccessTokenExpireSec: cfg.Server.JWTExpirationHours * 3600,
+	})
 
 	// 3. 配置 HTTP 路由
 	r := chi.NewRouter()
@@ -110,9 +150,13 @@ func main() {
 	if len(cfg.Server.AllowedOrigins) > 0 {
 		r.Use(httptransport.CORSMiddleware(cfg.Server.AllowedOrigins))
 	}
+	r.Get("/api/v1/auth/request-login", httpHandler.SSORequestLoginHandler)
 	r.Post("/api/v1/auth/login", httpHandler.LoginHandler)
 	r.Post("/api/v1/auth/logout", httpHandler.LogoutHandler)
 	r.Get("/api/v1/auth/validate", httpHandler.ValidateHandler)
+	r.Get("/api/v1/auth/me", httpHandler.MeHandler)
+	r.Post("/api/v1/auth/token", httpHandler.TokenHandler)
+	r.Post("/api/v1/auth/token-by-code", httpHandler.TokenByCodeHandler)
 	r.Post("/api/v1/auth/register", httpHandler.RegisterHandler)
 
 	// 4. 启动服务

@@ -3,9 +3,23 @@ server:
   port: 8888
   jwt_secret: "your_very_secret_key_for_jwt_signing"
   jwt_expiration_hours: 24
-  # 允许跨域访问的前端域名列表，例如前端运行在 http://localhost:3000
+  # 允许跨域访问的前端域名列表
   allowed_origins:
     - "http://localhost:5173"
+    - "http://localhost:5174"
+  # 认证中心对外完整 base URL，用于返回登录页完整路径（如 https://auth.example.com）
+  auth_base_url: "http://localhost:5173"
+  # SSO 登录页路径（与 auth_base_url 拼接成完整登录 URL）
+  login_page_path: "/monai/login"
+  # 已废弃，改用 clients 下每客户端的 allowed_redirect_uris
+  allowed_redirect_uris: []
+  # 子应用（客户端）列表，用于授权码流程
+  clients:
+    - client_id: mark-live
+      client_secret: "your_client_secret_for_money"
+      allowed_redirect_uris:
+        - "https://money.com/callback"
+        - "http://localhost:5174/callback"
 
 database:
   host: localhost

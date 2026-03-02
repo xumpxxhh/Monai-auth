@@ -15,6 +15,8 @@ type Service interface {
 	Login(ctx context.Context, req domain.LoginRequest) (string, error)
 	Register(ctx context.Context, req domain.RegisterRequest) (int64, error)
 	Validate(ctx context.Context, tokenString string) (*domain.User, error)
+	// IssueToken 为指定用户签发 access_token（用于授权码换 token）
+	IssueToken(ctx context.Context, userID int64) (string, error)
 }
 
 type authService struct {
@@ -104,4 +106,13 @@ func (s *authService) Validate(ctx context.Context, tokenString string) (*domain
 	}
 
 	return user, nil
+}
+
+// IssueToken 根据 userID 签发 JWT（用于授权码兑换 token）
+func (s *authService) IssueToken(ctx context.Context, userID int64) (string, error) {
+	user, err := s.repo.FindByID(ctx, userID)
+	if err != nil {
+		return "", err
+	}
+	return s.tokenService.GenerateToken(user.ID, user.Role)
 }

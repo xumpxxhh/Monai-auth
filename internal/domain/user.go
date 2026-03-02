@@ -52,6 +52,10 @@ type LoginRequest struct {
 	Username string `json:"username"`
 	Email    string `json:"email"`
 	Password string `json:"password"`
+	// State 子应用传来的 state，登录成功后重定向回子应用时原样带回
+	State string `json:"state"`
+	// ServerState 认证中心下发的 server_state，用于服务端从 StateStore 取回 client_id、redirect_uri、client state
+	ServerState string `json:"server_state"`
 }
 
 // RegisterRequest  注册DTO

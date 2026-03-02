@@ -19,7 +19,7 @@
 
 常见 `code`（以接口实际返回为准）：
 
-- `INVALID_REQUEST`
+- `INVALID_REQUEST` / `INVALID_CLIENT` / `INVALID_GRANT`
 - `INVALID_CREDENTIALS`
 - `UNAUTHORIZED`
 - `INVALID_TOKEN`
@@ -28,24 +28,112 @@
 - `PASSWORD_TOO_SHORT`
 - `INTERNAL_ERROR`
 
+### 接口一览
+
+| 方法 | 路径 | 说明 |
+|------|------|------|
+| GET | /api/v1/auth/request-login | 获取登录页完整 URL（SSO） |
+| POST | /api/v1/auth/login | 登录 |
+| POST | /api/v1/auth/logout | 登出 |
+| GET | /api/v1/auth/validate | 校验 token，返回 id、role |
+| GET | /api/v1/auth/me | 当前用户基本信息 |
+| POST | /api/v1/auth/token | 授权码换 token（子应用后端，需 client_secret） |
+| POST | /api/v1/auth/token-by-code | 授权码换 token（前端直连，无 client_secret） |
+| POST | /api/v1/auth/register | 注册 |
+
 ---
 
-## 1) 用户登录
+## 0) 单点登录（SSO）— 跨域授权码流程
 
-- **URL**: `POST /api/v1/auth/login`
-- **说明**: 使用邮箱+密码登录，成功后后端会在响应中设置一个名为 `auth_token` 的 **HttpOnly Cookie**，前端 JS 无法直接访问该 Token。
+### 0.1 子应用请求登录
+
+- **URL**: `GET /api/v1/auth/request-login`
+- **说明**: 子应用发现用户未登录时调用此接口，获取认证中心登录页的**完整 URL**；**不**做 302 重定向，仅返回 JSON。`state` 由服务端生成并绑定本次请求。
+
+### Query 参数
+
+| 参数 | 必填 | 说明 |
+|------|------|------|
+| client_id | 是 | 在认证中心注册的客户端 ID |
+| redirect_uri | 是 | 登录成功后要重定向回的子应用回调地址 |
+
+### Success Response
+
+- **200 OK**
+
+```json
+{
+  "login_url": "http://localhost:8888/monai/login?client_id=xxx&redirect_uri=xxx&state=xxx"
+}
+```
+
+- `login_url` 为认证中心登录页的完整路径，其中 `state` 由服务端生成（约 10 分钟有效），子应用或前端需跳转到该 URL 让用户登录；登录页提交时需将 URL 中的 `state` 以 `server_state` 字段提交给 `POST /api/v1/auth/login`。
+
+### 错误响应
+
+- **400**：缺少 `client_id` 或 `redirect_uri`。
+
+---
+
+### 0.2 认证中心登录
+
+用户在认证中心登录页（即 0.1 返回的 `login_url`）输入账号密码，提交到 `POST /api/v1/auth/login`。请求体需包含：
+
+- `email`、`password`
+- **SSO 必带**：`server_state`（登录页 URL 中的 `state` 参数，供服务端取回 client_id/redirect_uri）
+
+登录成功后，认证中心**不**做 302，而是返回 JSON，包含子应用回调的完整 URL：`{ "redirect_url": "https://子应用/callback?code=xxx&state=xxx" }`，其中 `state` 与登录页 URL 中的一致；前端或子应用收到后自行跳转。**不**在 URL 中带 token，仅带一次性授权码。
+
+---
+
+### 0.3 用授权码换取 Token（仅子应用后端调用）
+
+- **URL**: `POST /api/v1/auth/token`
+- **说明**: **必须由子应用的服务端调用**，禁止由前端/浏览器直接请求。前端只负责把回调 URL 中的 `code` 交给子应用后端（例如请求子应用自己的 `/api/callback?code=xxx`）；子应用后端再携带 `client_secret` 请求本接口换取 `access_token` 和 `user_id`，并在自身域名下写 Cookie 或把 JWT 返回给前端。`client_secret` 仅子应用后端持有，不得暴露给前端。
+
+### Request Body（application/x-www-form-urlencoded 或 application/json）
+
+| 参数 | 必填 | 说明 |
+|------|------|------|
+| grant_type | 是 | 固定为 `authorization_code` |
+| code | 是 | 前端从回调 URL 取到后交给后端的授权码（一次性、约 5 分钟有效） |
+| client_id | 是 | 客户端 ID |
+| client_secret | 是 | 客户端密钥（**仅子应用后端持有并在此请求中携带**，前端不参与） |
+| redirect_uri | 否 | 若传则需与颁发 code 时的 redirect_uri 一致 |
+
+### Success Response
+
+- **200 OK**
+
+```json
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIs...",
+  "token_type": "Bearer",
+  "expires_in": 86400,
+  "user_id": 123
+}
+```
+
+### 错误响应
+
+- **400**：`grant_type` 非 `authorization_code`，或缺少必填参数，或 `code` 无效/过期、`redirect_uri` 不匹配等（`INVALID_GRANT`）。
+- **401**：`client_id` / `client_secret` 错误（`INVALID_CLIENT`）。
+
+---
+
+### 0.4 前端直连：用 code 换 token（无子应用后端时）
+
+- **URL**: `POST /api/v1/auth/token-by-code`
+- **说明**: 没有子应用后端时，前端可直接用登录成功后拿到的凭证换取 token。登录接口在 SSO 流程下会返回 `{"redirect_url": "https://xxx/callback?code=xxx&state=xxx"}`，前端从 `redirect_url` 中解析出 `code`，再携带 `client_id` 和 `code` 调用本接口，**无需** `client_secret`。成功后在响应中设置 **HttpOnly Cookie** `auth_token`，token 不通过 body 返回；若需用户信息可再调 `GET /api/v1/auth/me`（带 Cookie 或 credentials）。
 
 ### Request Body
 
 ```json
 {
-  "email": "user@example.com",
-  "password": "password123",
-  "username": "optional"
+  "client_id": "mark-live",
+  "code": "从 redirect_url 的 query 中解析出的 code"
 }
 ```
-
-> 备注：当前实现以 `email` + `password` 为准，`username` 字段即使传入也不会参与登录校验。
 
 ### Success Response
 
@@ -54,6 +142,50 @@
 ```json
 { "status": "ok" }
 ```
+
+- 响应头会设置 Cookie：`auth_token=<jwt>`（HttpOnly，认证中心域）。后续请求认证中心的 `/me`、`/validate` 时需携带该 Cookie（如 `credentials: 'include'`）。
+
+### 错误响应
+
+- **400**：缺少 `client_id` 或 `code`，或 `code` 无效/过期、或 `code` 并非该 `client_id` 颁发（`INVALID_GRANT`）。
+
+---
+
+## 1) 用户登录
+
+- **URL**: `POST /api/v1/auth/login`
+- **说明**: 邮箱+密码登录。若请求体带 **server_state**（SSO 流程），登录成功后在 **body** 中返回子应用回调地址 `redirect_url`（不 302）；否则设置 **HttpOnly Cookie** `auth_token` 并返回 `{"status": "ok"}`。
+
+### Request Body
+
+```json
+{
+  "email": "user@example.com",
+  "password": "password123",
+  "username": "optional",
+  "server_state": "SSO 时必带，即登录页 URL 中的 state 参数"
+}
+```
+
+### Success Response（非 SSO）
+
+- **200 OK**
+
+```json
+{ "status": "ok" }
+```
+
+同时设置 Cookie：`auth_token=<jwt>`（HttpOnly）。
+
+### Success Response（SSO，请求体带 server_state）
+
+- **200 OK**
+
+```json
+{ "redirect_url": "https://子应用/callback?code=xxx&state=xxx" }
+```
+
+- 不 302，前端或子应用根据 `redirect_url` 自行跳转。子应用有后端时可调 `POST /api/v1/auth/token`（带 client_secret）换 token；无后端时前端可调 `POST /api/v1/auth/token-by-code`（带 client_id + code）换 token（响应会设置 Cookie）。
 
 ### Error Responses
 
@@ -178,10 +310,10 @@
 
 ### Error Responses
 
-- **401 Unauthorized**（缺少/非法 Authorization 头）
+- **401 Unauthorized**（缺少或无效 token）
 
 ```json
-{ "code": "UNAUTHORIZED", "message": "Missing or invalid Authorization header" }
+{ "code": "UNAUTHORIZED", "message": "Missing or invalid token" }
 ```
 
 - **401 Unauthorized**（token 无效或过期）
@@ -189,6 +321,36 @@
 ```json
 { "code": "INVALID_TOKEN", "message": "Token validation failed" }
 ```
+
+---
+
+## 5) 获取当前用户基本信息
+
+- **URL**: `GET /api/v1/auth/me`
+- **说明**: 根据当前请求的 token 返回登录用户的基本信息（id、用户名、邮箱、角色、创建时间）。鉴权方式同 validate（Cookie `auth_token` 或 `Authorization: Bearer <token>`）。
+
+### Headers
+
+- **Cookie**: `auth_token=<token>`（浏览器同域会自动携带）
+- 或 **Authorization**: `Bearer <token>`
+
+### Success Response
+
+- **200 OK**
+
+```json
+{
+  "id": 123,
+  "username": "user@example.com",
+  "email": "user@example.com",
+  "role": "standard",
+  "created_at": "2025-01-15T08:00:00Z"
+}
+```
+
+### Error Responses
+
+- **401 Unauthorized**（未提供或无效 token）：同「4) 校验 Token」的 401 响应。
 
 ---
 
@@ -223,5 +385,27 @@ curl -X POST "http://localhost:8888/api/v1/auth/logout" ^
 ```bash
 curl -X GET "http://localhost:8888/api/v1/auth/validate" ^
   --cookie "auth_token=<your_token_here>"
+```
+
+### 获取当前用户信息
+
+```bash
+curl -X GET "http://localhost:8888/api/v1/auth/me" ^
+  --cookie "auth_token=<your_token_here>"
+```
+
+### 请求登录（SSO）
+
+```bash
+curl -X GET "http://localhost:8888/api/v1/auth/request-login?client_id=mark-live&redirect_uri=https://example.com/callback"
+```
+
+### 前端用 code 换 token（token-by-code）
+
+```bash
+curl -X POST "http://localhost:8888/api/v1/auth/token-by-code" ^
+  -H "Content-Type: application/json" ^
+  -d "{\"client_id\":\"mark-live\",\"code\":\"从 redirect_url 解析的 code\"}" ^
+  -c cookies.txt -b cookies.txt
 ```
 
