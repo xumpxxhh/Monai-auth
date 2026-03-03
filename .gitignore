@@ -1,0 +1,10 @@
+# 可执行文件
+*.exe
+*.exe~
+
+# Go
+/auth-server
+auth-server-linux-amd64
+
+# 用户上传目录
+uploads/
