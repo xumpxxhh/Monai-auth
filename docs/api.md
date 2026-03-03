@@ -39,6 +39,7 @@
 | GET | /api/v1/auth/me | 当前用户基本信息 |
 | POST | /api/v1/auth/token | 授权码换 token（子应用后端，需 client_secret） |
 | POST | /api/v1/auth/token-by-code | 授权码换 token（前端直连，无 client_secret） |
+| POST | /api/v1/auth/upload | 上传静态资源（需鉴权，保存至 uploads/用户名/文件名） |
 | POST | /api/v1/auth/register | 注册 |
 
 ---
@@ -354,6 +355,49 @@
 
 ---
 
+## 6) 上传静态资源
+
+- **URL**: `POST /api/v1/auth/upload`
+- **说明**: 上传文件，需鉴权。通过 token 获取当前用户，文件保存至 `uploads/<用户名>/<文件名>`；用户名会做安全替换（仅保留字母数字、下划线、横线、点）。上传成功后返回资源访问路径与完整 URL。
+
+### Headers
+
+- **Cookie**: `auth_token=<token>` 或 **Authorization**: `Bearer <token>`
+
+### Request Body（multipart/form-data）
+
+| 字段 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| fileName | string | 是 | 文件名（仅使用 basename，禁止含 `..`） |
+| file | file | 是 | 文件内容 |
+
+### Success Response
+
+- **200 OK**
+
+```json
+{
+  "path": "uploads/user_example_com/avatar.jpg",
+  "route": "/static/uploads/user_example_com/avatar.jpg",
+  "access_url": "http://localhost:8888/static/uploads/user_example_com/avatar.jpg"
+}
+```
+
+- **path**：相对路径，服务端存储路径。
+- **route**：静态资源路由，同源下可直接用于前端（如 `<img src="/static/...">`）。
+- **access_url**：完整可访问 URL，可直接用于跨域或分享；协议会根据请求（含 `X-Forwarded-Proto`）自动判断。
+
+### 静态资源访问
+
+- 上传后的文件可通过 `GET /static/uploads/<用户名>/<文件名>` 访问（或使用返回的 `access_url`）。
+
+### Error Responses
+
+- **400**：缺少 `fileName` 或 `file`、或 `fileName` 不合法。
+- **401**：未提供或无效 token（同「4) 校验 Token」）。
+
+---
+
 ## 示例调用
 
 ### 注册
@@ -407,5 +451,14 @@ curl -X POST "http://localhost:8888/api/v1/auth/token-by-code" ^
   -H "Content-Type: application/json" ^
   -d "{\"client_id\":\"mark-live\",\"code\":\"从 redirect_url 解析的 code\"}" ^
   -c cookies.txt -b cookies.txt
+```
+
+### 上传静态资源
+
+```bash
+curl -X POST "http://localhost:8888/api/v1/auth/upload" ^
+  -H "Authorization: Bearer <your_token_here>" ^
+  -F "fileName=avatar.jpg" ^
+  -F "file=@./local-avatar.jpg"
 ```
 
