@@ -18,7 +18,6 @@ server:
     - client_id: mark-live
       client_secret: "your_client_secret_for_money"
       allowed_redirect_uris:
-        - "https://money.com/callback"
         - "http://localhost:5174/callback"
 
 database:
