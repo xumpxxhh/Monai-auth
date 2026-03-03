@@ -61,6 +61,44 @@ func validateConfig(cfg Config) error {
 	return nil
 }
 
+// staticCORSHandler 为 /static/ 响应加 CORS 头，跨域加载时浏览器才能按 Cache-Control 正常缓存
+func staticCORSHandler(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		next.ServeHTTP(w, r)
+	})
+}
+
+// cacheControlHandler 包装 handler，为 200 响应添加 Cache-Control: public, max-age=<sec>
+func cacheControlHandler(next http.Handler, maxAge int) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		next.ServeHTTP(&cacheControlResponseWriter{ResponseWriter: w, maxAge: maxAge}, r)
+	})
+}
+
+type cacheControlResponseWriter struct {
+	http.ResponseWriter
+	maxAge int
+	sent   bool
+}
+
+func (w *cacheControlResponseWriter) WriteHeader(code int) {
+	if !w.sent {
+		w.sent = true
+		if code == http.StatusOK || code == http.StatusNotModified {
+			w.Header().Set("Cache-Control", fmt.Sprintf("public, max-age=%d", w.maxAge))
+		}
+	}
+	w.ResponseWriter.WriteHeader(code)
+}
+
+func (w *cacheControlResponseWriter) Write(p []byte) (int, error) {
+	if !w.sent {
+		w.WriteHeader(http.StatusOK)
+	}
+	return w.ResponseWriter.Write(p)
+}
+
 // initDB 初始化并返回 GORM 数据库连接
 func initDB(cfg Config) *gorm.DB {
 	dsn := fmt.Sprintf(
@@ -155,9 +193,14 @@ func main() {
 	r.Post("/api/v1/auth/logout", httpHandler.LogoutHandler)
 	r.Get("/api/v1/auth/validate", httpHandler.ValidateHandler)
 	r.Get("/api/v1/auth/me", httpHandler.MeHandler)
+	r.Post("/api/v1/auth/upload", httpHandler.UploadHandler)
 	r.Post("/api/v1/auth/token", httpHandler.TokenHandler)
 	r.Post("/api/v1/auth/token-by-code", httpHandler.TokenByCodeHandler)
 	r.Post("/api/v1/auth/register", httpHandler.RegisterHandler)
+	// 上传文件的访问路径（跨域可访问 + 3 天缓存，便于前端另一域名下走缓存）
+	const staticCacheMaxAge = 3 * 24 * 3600 // 3 天
+	staticHandler := http.StripPrefix("/static", cacheControlHandler(http.FileServer(http.Dir(".")), staticCacheMaxAge))
+	r.Handle("/static/*", staticCORSHandler(staticHandler))
 
 	// 4. 启动服务
 	addr := fmt.Sprintf(":%s", cfg.Server.Port)
