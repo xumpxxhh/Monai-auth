@@ -29,3 +29,16 @@ type UserGORM struct {
 func (UserGORM) TableName() string {
 	return "users"
 }
+
+// UserAssetGORM 对应 user_assets 表
+type UserAssetGORM struct {
+	ID           uint   `gorm:"primaryKey;autoIncrement"`
+	UserID       int64  `gorm:"not null;index"`
+	FilePath     string `gorm:"type:varchar(512);not null"`
+	FileType     string `gorm:"type:varchar(32);not null;default:avatar;index"`
+	OriginalName string `gorm:"type:varchar(255)"`
+	Size         *int   `gorm:"type:int unsigned"`
+	CreatedAt    time.Time
+}
+
+func (UserAssetGORM) TableName() string { return "user_assets" }

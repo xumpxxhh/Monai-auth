@@ -38,6 +38,7 @@ type Handler struct {
 	AuthService          auth.Service
 	StateStore           auth.StateStore
 	CodeStore            auth.CodeStore
+	UserAssetRepository  domain.UserAssetRepository // 上传资源写入 user_assets 表，可为 nil 则仅落盘
 	LoginPagePath        string
 	AuthBaseURL          string // 认证中心对外 base URL，用于拼完整登录页地址
 	AllowedRedirectURIs  []string
@@ -49,6 +50,7 @@ type Handler struct {
 type HandlerOpts struct {
 	StateStore           auth.StateStore
 	CodeStore            auth.CodeStore
+	UserAssetRepository  domain.UserAssetRepository
 	LoginPagePath        string
 	AuthBaseURL          string
 	AllowedRedirectURIs  []string
@@ -82,6 +84,7 @@ func NewHandler(authService auth.Service, opts *HandlerOpts) *Handler {
 	if opts != nil {
 		h.StateStore = opts.StateStore
 		h.CodeStore = opts.CodeStore
+		h.UserAssetRepository = opts.UserAssetRepository
 		if opts.LoginPagePath != "" {
 			h.LoginPagePath = opts.LoginPagePath
 		} else {
@@ -301,12 +304,12 @@ func (h *Handler) UploadHandler(w http.ResponseWriter, r *http.Request) {
 		writeError(w, "INVALID_REQUEST", "Invalid multipart form", http.StatusBadRequest, "")
 		return
 	}
-	fileName := strings.TrimSpace(r.FormValue("fileName"))
-	if fileName == "" {
+	originalFileName := strings.TrimSpace(r.FormValue("fileName"))
+	if originalFileName == "" {
 		writeError(w, "INVALID_REQUEST", "fileName is required", http.StatusBadRequest, "")
 		return
 	}
-	fileName = filepath.Base(fileName)
+	fileName := filepath.Base(originalFileName)
 	if fileName == "" || fileName == "." || strings.Contains(fileName, "..") {
 		writeError(w, "INVALID_REQUEST", "Invalid fileName", http.StatusBadRequest, "")
 		return
@@ -343,6 +346,18 @@ func (h *Handler) UploadHandler(w http.ResponseWriter, r *http.Request) {
 	relativePath := filepath.Join("uploads", safeUsername, fileName)
 	if filepath.Separator == '\\' {
 		relativePath = strings.ReplaceAll(relativePath, "\\", "/")
+	}
+	// 写入 user_assets 表（若已注入 UserAssetRepository）
+	var size *int
+	if fi, err := dst.Stat(); err == nil {
+		s := int(fi.Size())
+		size = &s
+	}
+	if h.UserAssetRepository != nil {
+		if err := h.UserAssetRepository.Create(r.Context(), user.ID, relativePath, "avatar", originalFileName, size); err != nil {
+			log.Printf("[AUTH] upload create user_asset: %v", err)
+			// 文件已落盘，仅记录日志，不中断响应
+		}
 	}
 	// 资源访问路径：相对路径 /static/... 与完整 URL（供客户端直接使用）
 	staticRoute := "/static/" + relativePath

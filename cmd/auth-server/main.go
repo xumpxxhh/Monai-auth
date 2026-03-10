@@ -140,8 +140,8 @@ func main() {
 	gormDB := initDB(cfg)
 
 	// 仓库层 (Repository)
-	// 使用 userrepo 别名
 	userRepo := userrepo.NewGORMUserRepository(gormDB)
+	userAssetRepo := userrepo.NewGORMUserAssetRepository(gormDB)
 
 	// Token 服务
 	expiry := time.Duration(cfg.Server.JWTExpirationHours) * time.Hour
@@ -175,6 +175,7 @@ func main() {
 	httpHandler := httptransport.NewHandler(authService, &httptransport.HandlerOpts{
 		StateStore:           stateStore,
 		CodeStore:            codeStore,
+		UserAssetRepository:  userAssetRepo,
 		LoginPagePath:        loginPagePath,
 		AuthBaseURL:          authBaseURL,
 		AllowedRedirectURIs:  cfg.Server.AllowedRedirectURIs,

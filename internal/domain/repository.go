@@ -18,3 +18,8 @@ type UserRepository interface {
 	// CreateUser 创建新用户
 	CreateUser(ctx context.Context, user *User) error
 }
+
+// UserAssetRepository 用户上传资源（如头像）的持久化
+type UserAssetRepository interface {
+	Create(ctx context.Context, userID int64, filePath, fileType, originalName string, size *int) error
+}
