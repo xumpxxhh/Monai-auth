@@ -39,6 +39,7 @@ type Handler struct {
 	StateStore           auth.StateStore
 	CodeStore            auth.CodeStore
 	UserAssetRepository  domain.UserAssetRepository // 上传资源写入 user_assets 表，可为 nil 则仅落盘
+	CookieSecure         bool   // 生产 HTTPS 时 true，Cookie 仅通过 HTTPS 发送
 	LoginPagePath        string
 	AuthBaseURL          string // 认证中心对外 base URL，用于拼完整登录页地址
 	AllowedRedirectURIs  []string
@@ -51,6 +52,7 @@ type HandlerOpts struct {
 	StateStore           auth.StateStore
 	CodeStore            auth.CodeStore
 	UserAssetRepository  domain.UserAssetRepository
+	CookieSecure         bool // 生产 HTTPS 时 true
 	LoginPagePath        string
 	AuthBaseURL          string
 	AllowedRedirectURIs  []string
@@ -85,6 +87,7 @@ func NewHandler(authService auth.Service, opts *HandlerOpts) *Handler {
 		h.StateStore = opts.StateStore
 		h.CodeStore = opts.CodeStore
 		h.UserAssetRepository = opts.UserAssetRepository
+		h.CookieSecure = opts.CookieSecure
 		if opts.LoginPagePath != "" {
 			h.LoginPagePath = opts.LoginPagePath
 		} else {
@@ -164,6 +167,7 @@ func (h *Handler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 		Value:    token,
 		Path:     "/",
 		HttpOnly: true,
+		Secure:   h.CookieSecure,
 		SameSite: http.SameSiteLaxMode,
 	})
 	w.Header().Set("Content-Type", "application/json")
@@ -216,6 +220,7 @@ func (h *Handler) LogoutHandler(w http.ResponseWriter, r *http.Request) {
 		Path:     "/",
 		MaxAge:   -1,
 		HttpOnly: true,
+		Secure:   h.CookieSecure,
 		SameSite: http.SameSiteLaxMode,
 	})
 	w.Header().Set("Content-Type", "application/json")
@@ -503,6 +508,7 @@ func (h *Handler) TokenByCodeHandler(w http.ResponseWriter, r *http.Request) {
 		Value:    accessToken,
 		Path:     "/",
 		HttpOnly: true,
+		Secure:   h.CookieSecure,
 		SameSite: http.SameSiteLaxMode,
 	})
 	w.Header().Set("Content-Type", "application/json")

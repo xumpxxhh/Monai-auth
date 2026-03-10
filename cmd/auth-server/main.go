@@ -31,6 +31,7 @@ type Config struct {
 		JWTExpirationHours  int            `mapstructure:"jwt_expiration_hours"`
 		AllowedOrigins      []string       `mapstructure:"allowed_origins"`
 		AuthBaseURL         string         `mapstructure:"auth_base_url"`
+		CookieSecure        bool           `mapstructure:"cookie_secure"`
 		LoginPagePath       string         `mapstructure:"login_page_path"`
 		AllowedRedirectURIs []string       `mapstructure:"allowed_redirect_uris"`
 		Clients             []ClientConfig `mapstructure:"clients"`
@@ -176,6 +177,7 @@ func main() {
 		StateStore:           stateStore,
 		CodeStore:            codeStore,
 		UserAssetRepository:  userAssetRepo,
+		CookieSecure:         cfg.Server.CookieSecure,
 		LoginPagePath:        loginPagePath,
 		AuthBaseURL:          authBaseURL,
 		AllowedRedirectURIs:  cfg.Server.AllowedRedirectURIs,
