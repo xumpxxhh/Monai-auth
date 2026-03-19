@@ -1,0 +1,668 @@
+2026/03/04 15:17:28 Database connection successful.
+2026/03/04 15:17:28 Auth Service starting on :8888
+2026/03/04 15:17:51 [GET]	/api/v1/auth/validate	127.0.0.1:47928	401	122.417µs
+2026/03/04 15:17:51 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fwww.xump.cn%2Fmark%2F&client_id=mark-live	127.0.0.1:47930	200	113.919µs
+2026/03/04 15:17:52 [GET]	/api/v1/auth/validate	127.0.0.1:47940	401	50.995µs
+redirect_url https://www.xump.cn/mark/?code=1725bb0dc5a3d371754a916ad380d599864785b08eb46361
+2026/03/04 15:17:59 [POST]	/api/v1/auth/login	127.0.0.1:47944	200	71.591866ms
+2026/03/04 15:17:59 [GET]	/api/v1/auth/validate	127.0.0.1:47946	401	47.717µs
+2026/03/04 15:17:59 [POST]	/api/v1/auth/token-by-code	127.0.0.1:47950	200	1.386425ms
+2026/03/04 15:18:00 [GET]	/api/v1/auth/validate	127.0.0.1:47952	200	1.396379ms
+2026/03/04 15:18:00 [GET]	/api/v1/auth/me	127.0.0.1:47954	200	1.224046ms
+2026/03/04 15:18:03 [POST]	/api/v1/auth/logout	127.0.0.1:47958	200	75.129µs
+2026/03/04 15:18:03 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fwww.xump.cn%2Fmark%2Fprofile&client_id=mark-live	127.0.0.1:47960	200	116.692µs
+2026/03/04 15:18:03 [GET]	/api/v1/auth/validate	127.0.0.1:47966	401	38.677µs
+redirect_url https://www.xump.cn/mark/profile?code=7dae38831b1d14c6a410d6b284944ce6dcd41a933bc45c4e
+2026/03/04 15:18:10 [POST]	/api/v1/auth/login	127.0.0.1:47968	200	70.018442ms
+2026/03/04 15:18:10 [GET]	/api/v1/auth/validate	127.0.0.1:47970	401	49.956µs
+2026/03/04 15:18:10 [POST]	/api/v1/auth/token-by-code	127.0.0.1:47974	200	1.510675ms
+2026/03/04 15:18:10 [GET]	/api/v1/auth/validate	127.0.0.1:47976	200	1.328899ms
+2026/03/04 15:18:10 [GET]	/api/v1/auth/me	127.0.0.1:47978	200	1.098299ms
+2026/03/04 17:49:04 [GET]	/api/v1/auth/validate	127.0.0.1:50030	401	54.979µs
+2026/03/04 17:49:04 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fwww.xump.cn%2Fmark%2F&client_id=mark-live	127.0.0.1:50034	200	93.786µs
+2026/03/04 17:49:04 [GET]	/api/v1/auth/validate	127.0.0.1:50044	401	70.21µs
+2026/03/04 17:49:51 [GET]	/api/v1/auth/validate	127.0.0.1:50054	401	54.689µs
+2026/03/04 17:49:52 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fxump.cn%2Fmark%2F&client_id=mark-live	127.0.0.1:50056	200	79.643µs
+2026/03/04 17:49:52 [GET]	/api/v1/auth/validate	127.0.0.1:50066	401	76.84µs
+2026/03/04 17:50:33 [GET]	/api/v1/auth/validate	127.0.0.1:50092	401	37.04µs
+2026/03/04 17:50:33 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fxump.cn%2Fmark%2F&client_id=mark-live	127.0.0.1:50094	200	56.121µs
+2026/03/04 17:50:33 [GET]	/api/v1/auth/validate	127.0.0.1:50100	401	52.595µs
+redirect_url https://xump.cn/mark/?code=1b6d167bdb2050cf2a440c730786b57110b813d27dc62e0c
+2026/03/04 17:50:52 [POST]	/api/v1/auth/login	127.0.0.1:50112	200	70.871953ms
+2026/03/04 17:50:52 [GET]	/api/v1/auth/validate	127.0.0.1:50114	401	42.541µs
+2026/03/04 17:50:53 [POST]	/api/v1/auth/token-by-code	127.0.0.1:50118	200	1.163637ms
+2026/03/04 17:50:53 [GET]	/api/v1/auth/validate	127.0.0.1:50120	200	1.09475ms
+2026/03/04 17:50:53 [GET]	/api/v1/auth/me	127.0.0.1:50122	200	1.204438ms
+2026/03/04 18:01:23 [GET]	/api/v1/auth/validate	127.0.0.1:50272	200	1.046264ms
+2026/03/04 18:01:23 [GET]	/api/v1/auth/me	127.0.0.1:50274	200	1.253655ms
+2026/03/04 18:43:18 [GET]	/api/v1/auth/validate	127.0.0.1:50756	401	34.78µs
+2026/03/04 18:43:18 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fxump.cn%2Fmark%2Fprofile&client_id=mark-live	127.0.0.1:50758	200	120.467µs
+2026/03/04 18:43:18 [GET]	/api/v1/auth/validate	127.0.0.1:50764	401	50.521µs
+redirect_url https://xump.cn/mark/profile?code=d0a6f023361ea7fb709a6c118a0b763c9b941e6321138d37
+2026/03/04 18:43:22 [POST]	/api/v1/auth/login	127.0.0.1:50766	200	69.4399ms
+2026/03/04 18:43:22 [GET]	/api/v1/auth/validate	127.0.0.1:50768	401	52.036µs
+2026/03/04 18:43:22 [POST]	/api/v1/auth/token-by-code	127.0.0.1:50776	200	1.219273ms
+2026/03/04 18:43:22 [GET]	/api/v1/auth/validate	127.0.0.1:50778	200	1.217308ms
+2026/03/04 18:43:22 [GET]	/api/v1/auth/me	127.0.0.1:50780	200	1.180002ms
+2026/03/04 18:43:55 [POST]	/api/v1/auth/upload	127.0.0.1:50792	200	5.054244ms
+2026/03/04 18:44:03 [GET]	/api/v1/auth/validate	127.0.0.1:50802	200	1.235741ms
+2026/03/04 18:44:03 [GET]	/api/v1/auth/me	127.0.0.1:50804	200	1.135366ms
+2026/03/04 18:44:11 [GET]	/api/v1/auth/validate	127.0.0.1:50814	401	50.751µs
+2026/03/04 18:44:11 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fxump.cn%2Fmark%2Fhistory&client_id=mark-live	127.0.0.1:50816	200	71.873µs
+2026/03/04 18:44:11 [GET]	/api/v1/auth/validate	127.0.0.1:50822	401	39.806µs
+redirect_url https://xump.cn/mark/history?code=4bb5ce948b98562b8a8c91dcb94ac779cad8557399ad8b5b
+2026/03/04 18:44:15 [POST]	/api/v1/auth/login	127.0.0.1:50826	200	69.488651ms
+2026/03/04 18:44:15 [GET]	/api/v1/auth/validate	127.0.0.1:50828	401	73.611µs
+2026/03/04 18:44:15 [POST]	/api/v1/auth/token-by-code	127.0.0.1:50832	200	1.182223ms
+2026/03/04 18:44:15 [GET]	/api/v1/auth/validate	127.0.0.1:50834	200	1.059819ms
+2026/03/04 18:44:15 [GET]	/api/v1/auth/me	127.0.0.1:50836	200	1.238879ms
+2026/03/04 18:54:40 [GET]	/api/v1/auth/validate	127.0.0.1:50990	401	42.901µs
+2026/03/04 18:54:40 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fwww.xump.cn%2Fmark%2F&client_id=mark-live	127.0.0.1:50994	200	78.481µs
+2026/03/04 18:54:40 [GET]	/api/v1/auth/validate	127.0.0.1:51004	401	43.82µs
+redirect_url https://www.xump.cn/mark/?code=3b05056f9afc5d2630bae75c3a390a545c7206264770fcab
+2026/03/04 18:54:53 [POST]	/api/v1/auth/login	127.0.0.1:51018	200	69.918209ms
+2026/03/04 18:54:53 [GET]	/api/v1/auth/validate	127.0.0.1:51020	401	41.659µs
+2026/03/04 18:54:53 [POST]	/api/v1/auth/token-by-code	127.0.0.1:51024	200	2.909442ms
+2026/03/04 18:54:53 [GET]	/api/v1/auth/validate	127.0.0.1:51026	200	1.146967ms
+2026/03/04 18:54:53 [GET]	/api/v1/auth/me	127.0.0.1:51028	200	1.245686ms
+2026/03/04 18:56:02 [GET]	/api/v1/auth/validate	127.0.0.1:51058	401	73.827µs
+2026/03/04 21:15:52 [GET]	/api/v1/auth/validate	127.0.0.1:52666	401	53.557µs
+2026/03/04 21:15:52 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fxump.cn%2Fmark%2F&client_id=mark-live	127.0.0.1:52668	200	113.472µs
+2026/03/04 21:15:52 [GET]	/api/v1/auth/validate	127.0.0.1:52678	401	42.196µs
+redirect_url https://xump.cn/mark/?code=8f4d39a000001012661cf0f1cb965b56732a8fae5fb0b897
+2026/03/04 21:15:55 [POST]	/api/v1/auth/login	127.0.0.1:52680	200	70.224611ms
+2026/03/04 21:15:55 [GET]	/api/v1/auth/validate	127.0.0.1:52682	401	34.838µs
+2026/03/04 21:15:55 [POST]	/api/v1/auth/token-by-code	127.0.0.1:52690	200	1.115605ms
+2026/03/04 21:15:55 [GET]	/api/v1/auth/validate	127.0.0.1:52692	200	1.114397ms
+2026/03/04 21:15:55 [GET]	/api/v1/auth/me	127.0.0.1:52694	200	1.120256ms
+2026/03/04 22:27:57 [GET]	/api/v1/auth/validate	127.0.0.1:53568	401	36.924µs
+2026/03/04 22:27:57 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fxump.cn%2Fmark%2Fhistory&client_id=mark-live	127.0.0.1:53570	200	53.924µs
+2026/03/04 22:27:57 [GET]	/api/v1/auth/validate	127.0.0.1:53576	401	56.016µs
+redirect_url https://xump.cn/mark/history?code=50780f146e8667554e6c8d835e0203820cf0c848ea4a6ee6
+2026/03/04 22:27:59 [POST]	/api/v1/auth/login	127.0.0.1:53578	200	69.941951ms
+2026/03/04 22:27:59 [GET]	/api/v1/auth/validate	127.0.0.1:53580	401	36.543µs
+2026/03/04 22:27:59 [POST]	/api/v1/auth/token-by-code	127.0.0.1:53588	200	1.051782ms
+2026/03/04 22:28:00 [GET]	/api/v1/auth/validate	127.0.0.1:53590	200	1.021597ms
+2026/03/04 22:28:00 [GET]	/api/v1/auth/me	127.0.0.1:53592	200	1.088716ms
+2026/03/05 01:56:43 [GET]	/api/v1/auth/validate	127.0.0.1:56032	401	65.41µs
+2026/03/05 01:56:43 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fxump.cn%2Fmark%2F&client_id=mark-live	127.0.0.1:56036	200	71.435µs
+2026/03/05 01:56:44 [GET]	/api/v1/auth/validate	127.0.0.1:56046	401	42.505µs
+redirect_url https://xump.cn/mark/?code=fd14e9e0a6da2671380e27a08675b4a91d2ed6c4fd35b224
+2026/03/05 01:56:48 [POST]	/api/v1/auth/login	127.0.0.1:56048	200	69.460865ms
+2026/03/05 01:56:48 [GET]	/api/v1/auth/validate	127.0.0.1:56050	401	61.275µs
+2026/03/05 01:56:48 [POST]	/api/v1/auth/token-by-code	127.0.0.1:56054	200	1.1154ms
+2026/03/05 01:56:48 [GET]	/api/v1/auth/validate	127.0.0.1:56056	200	1.03887ms
+2026/03/05 01:56:48 [GET]	/api/v1/auth/me	127.0.0.1:56058	200	1.059422ms
+2026/03/05 12:39:49 [GET]	/api/v1/auth/validate	127.0.0.1:35666	401	57.859µs
+2026/03/05 12:39:49 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fxump.cn%2Fmark%2F&client_id=mark-live	127.0.0.1:35668	200	55.348µs
+2026/03/05 12:39:49 [GET]	/api/v1/auth/validate	127.0.0.1:35678	401	47.099µs
+[mysql] 2026/03/05 12:39:51 connection.go:49: closing bad idle connection: unexpected read from socket
+redirect_url https://xump.cn/mark/?code=780224cbbfcedbc445a3a02a4741bd79974186ffa7d31188
+2026/03/05 12:39:51 [POST]	/api/v1/auth/login	127.0.0.1:35680	200	71.185269ms
+2026/03/05 12:39:51 [GET]	/api/v1/auth/validate	127.0.0.1:35686	401	50.3µs
+2026/03/05 12:39:52 [POST]	/api/v1/auth/token-by-code	127.0.0.1:35694	200	16.188335ms
+2026/03/05 12:39:52 [GET]	/api/v1/auth/validate	127.0.0.1:35696	200	1.018848ms
+2026/03/05 12:39:52 [GET]	/api/v1/auth/me	127.0.0.1:35698	200	1.138184ms
+2026/03/05 13:51:19 [GET]	/api/v1/auth/validate	127.0.0.1:36560	401	43.528µs
+2026/03/05 13:51:19 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fxump.cn%2Fmark%2F&client_id=mark-live	127.0.0.1:36562	200	61.835µs
+2026/03/05 13:51:19 [GET]	/api/v1/auth/validate	127.0.0.1:36568	401	77.745µs
+redirect_url https://xump.cn/mark/?code=955ad89befb7a72f59a2c7f4448e5079ae831e29c0368e50
+2026/03/05 13:51:21 [POST]	/api/v1/auth/login	127.0.0.1:36570	200	71.188471ms
+2026/03/05 13:51:21 [GET]	/api/v1/auth/validate	127.0.0.1:36572	401	50.535µs
+2026/03/05 13:51:21 [POST]	/api/v1/auth/token-by-code	127.0.0.1:36576	200	1.082722ms
+2026/03/05 13:51:21 [GET]	/api/v1/auth/validate	127.0.0.1:36578	200	1.14245ms
+2026/03/05 13:51:22 [GET]	/api/v1/auth/me	127.0.0.1:36580	200	1.028599ms
+2026/03/05 13:51:56 [POST]	/api/v1/auth/logout	127.0.0.1:36590	200	101.994µs
+2026/03/05 13:51:56 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fxump.cn%2Fmark%2Fprofile&client_id=mark-live	127.0.0.1:36592	200	63.089µs
+2026/03/05 13:51:56 [GET]	/api/v1/auth/validate	127.0.0.1:36598	401	44.821µs
+2026/03/05 13:52:30 [POST]	/api/v1/auth/register	127.0.0.1:36610	201	77.15588ms
+redirect_url https://xump.cn/mark/profile?code=6b0cf99588181e23e18681d5efbbf49484585f8cbc088a79
+2026/03/05 13:52:31 [POST]	/api/v1/auth/login	127.0.0.1:36612	200	70.49176ms
+2026/03/05 13:52:31 [GET]	/api/v1/auth/validate	127.0.0.1:36614	401	47.316µs
+2026/03/05 13:52:31 [POST]	/api/v1/auth/token-by-code	127.0.0.1:36618	200	1.138824ms
+2026/03/05 13:52:31 [GET]	/api/v1/auth/validate	127.0.0.1:36620	200	1.095089ms
+2026/03/05 13:52:31 [GET]	/api/v1/auth/me	127.0.0.1:36622	200	17.320717ms
+2026/03/05 13:56:46 [GET]	/api/v1/auth/validate	127.0.0.1:36688	200	1.190997ms
+2026/03/05 13:56:46 [GET]	/api/v1/auth/me	127.0.0.1:36690	200	1.451379ms
+2026/03/05 14:14:40 [GET]	/api/v1/auth/validate	127.0.0.1:36900	200	1.10347ms
+2026/03/05 14:14:40 [GET]	/api/v1/auth/me	127.0.0.1:36902	200	1.157504ms
+2026/03/05 14:14:45 [POST]	/api/v1/auth/logout	127.0.0.1:36908	200	72.688µs
+2026/03/05 14:14:45 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fwww.xump.cn%2Fmark%2Fprofile&client_id=mark-live	127.0.0.1:36910	200	46.14µs
+2026/03/05 14:14:45 [GET]	/api/v1/auth/validate	127.0.0.1:36920	401	108.334µs
+redirect_url https://www.xump.cn/mark/profile?code=36b4262f154fba417fbeaeba12b62614445e9a12c2baa301
+2026/03/05 14:14:57 [POST]	/api/v1/auth/login	127.0.0.1:36924	200	70.835244ms
+2026/03/05 14:14:57 [GET]	/api/v1/auth/validate	127.0.0.1:36926	401	29.965µs
+2026/03/05 14:14:57 [POST]	/api/v1/auth/token-by-code	127.0.0.1:36930	200	1.170471ms
+2026/03/05 14:14:58 [GET]	/api/v1/auth/validate	127.0.0.1:36932	200	1.151603ms
+2026/03/05 14:14:58 [GET]	/api/v1/auth/me	127.0.0.1:36934	200	1.086303ms
+2026/03/05 14:15:25 [POST]	/api/v1/auth/upload	127.0.0.1:36946	200	2.109331ms
+2026/03/05 14:15:59 [GET]	/api/v1/auth/validate	127.0.0.1:36966	200	1.26333ms
+2026/03/05 14:15:59 [GET]	/api/v1/auth/me	127.0.0.1:36968	200	1.173301ms
+2026/03/05 14:16:37 [GET]	/api/v1/auth/validate	127.0.0.1:36990	200	2.403678ms
+2026/03/05 14:16:37 [GET]	/api/v1/auth/me	127.0.0.1:36992	200	1.48366ms
+2026/03/05 14:16:52 [POST]	/api/v1/auth/upload	127.0.0.1:37008	200	7.09149ms
+2026/03/05 14:18:40 [GET]	//static/uploads/test/%E7%AE%A1%E7%BD%91.png	127.0.0.1:37038	404	25.865µs
+2026/03/05 14:18:47 [GET]	/static/uploads/test/%E7%AE%A1%E7%BD%91.png	127.0.0.1:37042	200	4.808333ms
+2026/03/05 14:19:02 [GET]	/api/v1/auth/validate	127.0.0.1:37056	200	1.104331ms
+2026/03/05 14:19:02 [GET]	/api/v1/auth/me	127.0.0.1:37058	200	1.288536ms
+2026/03/05 14:19:02 [GET]	/static/uploads/test/%E7%AE%A1%E7%BD%91.png	127.0.0.1:37062	200	1.483736ms
+2026/03/05 14:19:02 [GET]	/static/uploads/test/PLC%E8%AE%BE%E5%A4%87%E9%85%8D%E7%BD%AE%E4%BF%A1%E6%81%AF.png	127.0.0.1:37064	200	299.378µs
+2026/03/05 14:19:06 [GET]	/static/uploads/test/%E7%AE%A1%E7%BD%91.png	127.0.0.1:37068	200	1.455226ms
+2026/03/05 14:19:06 [GET]	/static/uploads/test/PLC%E8%AE%BE%E5%A4%87%E9%85%8D%E7%BD%AE%E4%BF%A1%E6%81%AF.png	127.0.0.1:37070	200	303.378µs
+2026/03/05 14:19:16 [GET]	/static/uploads/test/%E7%AE%A1%E7%BD%91.png	127.0.0.1:37076	200	1.397946ms
+2026/03/05 14:19:16 [GET]	/static/uploads/test/PLC%E8%AE%BE%E5%A4%87%E9%85%8D%E7%BD%AE%E4%BF%A1%E6%81%AF.png	127.0.0.1:37078	200	286.195µs
+2026/03/05 14:19:20 [GET]	/static/uploads/test/%E7%AE%A1%E7%BD%91.png	127.0.0.1:37084	200	1.381543ms
+2026/03/05 14:19:20 [GET]	/static/uploads/test/PLC%E8%AE%BE%E5%A4%87%E9%85%8D%E7%BD%AE%E4%BF%A1%E6%81%AF.png	127.0.0.1:37086	200	291.585µs
+2026/03/05 19:14:14 [GET]	/api/v1/auth/validate	127.0.0.1:40508	401	40.138µs
+2026/03/05 19:14:14 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fxump.cn%2Fmark%2F&client_id=mark-live	127.0.0.1:40510	200	73.607µs
+2026/03/05 19:14:14 [GET]	/api/v1/auth/validate	127.0.0.1:40520	401	41.608µs
+redirect_url https://xump.cn/mark/?code=6a26a3a6426e58087dfb229e27d8ec5b9ce5cf4ff42179bc
+2026/03/05 19:14:17 [POST]	/api/v1/auth/login	127.0.0.1:40522	200	70.547534ms
+2026/03/05 19:14:17 [GET]	/api/v1/auth/validate	127.0.0.1:40524	401	39.49µs
+2026/03/05 19:14:17 [POST]	/api/v1/auth/token-by-code	127.0.0.1:40532	200	1.028056ms
+2026/03/05 19:14:17 [GET]	/api/v1/auth/validate	127.0.0.1:40534	200	18.322577ms
+2026/03/05 19:14:17 [GET]	/api/v1/auth/me	127.0.0.1:40536	200	1.146456ms
+2026/03/05 19:15:36 [GET]	/api/v1/auth/validate	127.0.0.1:40570	200	1.092434ms
+2026/03/05 19:15:36 [GET]	/api/v1/auth/me	127.0.0.1:40572	200	1.106765ms
+2026/03/05 19:16:08 [GET]	/api/v1/auth/validate	127.0.0.1:40590	200	1.050346ms
+2026/03/05 19:16:08 [GET]	/api/v1/auth/me	127.0.0.1:40592	200	1.224398ms
+2026/03/05 19:16:22 [GET]	/api/v1/auth/validate	127.0.0.1:40602	200	1.114229ms
+2026/03/05 19:16:22 [GET]	/api/v1/auth/me	127.0.0.1:40604	200	1.076511ms
+2026/03/05 19:54:30 [GET]	/api/v1/auth/validate	127.0.0.1:41046	401	37.872µs
+2026/03/05 19:54:30 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fxump.cn%2Fmark%2F&client_id=mark-live	127.0.0.1:41048	200	53.234µs
+2026/03/05 19:54:30 [GET]	/api/v1/auth/validate	127.0.0.1:41054	401	52.128µs
+redirect_url https://xump.cn/mark/?code=0fea118240873a4cfac8419509c42d947889e0f6c4aed09e
+2026/03/05 19:54:32 [POST]	/api/v1/auth/login	127.0.0.1:41056	200	71.339072ms
+2026/03/05 19:54:32 [GET]	/api/v1/auth/validate	127.0.0.1:41058	401	32.89µs
+2026/03/05 19:54:32 [POST]	/api/v1/auth/token-by-code	127.0.0.1:41062	200	1.149323ms
+2026/03/05 19:54:32 [GET]	/api/v1/auth/validate	127.0.0.1:41064	200	18.912371ms
+2026/03/05 19:54:32 [GET]	/api/v1/auth/me	127.0.0.1:41066	200	1.196854ms
+2026/03/05 20:58:47 [GET]	/api/v1/auth/validate	127.0.0.1:41816	401	36.615µs
+2026/03/05 20:58:47 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fxump.cn%2Fmark%2F&client_id=mark-live	127.0.0.1:41818	200	70.149µs
+2026/03/05 20:58:47 [GET]	/api/v1/auth/validate	127.0.0.1:41824	401	38.825µs
+redirect_url https://xump.cn/mark/?code=ceef6ef583211e6e4d2c2baa900eac18c7a2b48352cc001f
+2026/03/05 20:58:50 [POST]	/api/v1/auth/login	127.0.0.1:41826	200	70.999412ms
+2026/03/05 20:58:50 [GET]	/api/v1/auth/validate	127.0.0.1:41828	401	48.856µs
+2026/03/05 20:58:50 [POST]	/api/v1/auth/token-by-code	127.0.0.1:41832	200	1.332254ms
+2026/03/05 20:58:50 [GET]	/api/v1/auth/validate	127.0.0.1:41834	200	1.165462ms
+2026/03/05 20:58:50 [GET]	/api/v1/auth/me	127.0.0.1:41836	200	1.197823ms
+2026/03/05 21:00:10 [GET]	/api/v1/auth/validate	127.0.0.1:41864	200	1.299619ms
+2026/03/05 21:00:10 [GET]	/api/v1/auth/me	127.0.0.1:41866	200	20.767154ms
+[mysql] 2026/03/06 11:02:30 connection.go:49: closing bad idle connection: unexpected read from socket
+2026/03/06 11:02:30 [GET]	/api/v1/auth/validate	127.0.0.1:51502	200	2.618132ms
+2026/03/06 11:02:30 [GET]	/api/v1/auth/me	127.0.0.1:51508	200	1.139922ms
+2026/03/06 11:02:30 [GET]	/static/uploads/test/%E7%AE%A1%E7%BD%91.png	127.0.0.1:51514	200	1.549802ms
+2026/03/06 11:02:30 [GET]	/static/uploads/test/PLC%E8%AE%BE%E5%A4%87%E9%85%8D%E7%BD%AE%E4%BF%A1%E6%81%AF.png	127.0.0.1:51516	200	576.391µs
+2026/03/06 11:02:57 [POST]	/api/v1/auth/upload	127.0.0.1:51526	200	3.408146ms
+2026/03/06 11:02:57 [GET]	/static/uploads/test/%E7%94%9F%E4%BA%A7%E8%BF%90%E8%A1%8C%E8%AE%B0%E5%BD%95.png	127.0.0.1:51530	200	690.494µs
+2026/03/06 11:03:19 [GET]	/api/v1/auth/validate	127.0.0.1:51544	200	1.723089ms
+2026/03/06 11:03:19 [GET]	/api/v1/auth/me	127.0.0.1:51548	200	1.270682ms
+2026/03/06 11:03:19 [GET]	/static/uploads/test/%E7%94%9F%E4%BA%A7%E8%BF%90%E8%A1%8C%E8%AE%B0%E5%BD%95.png	127.0.0.1:51552	200	794.871µs
+2026/03/06 11:03:19 [GET]	/static/uploads/test/%E7%AE%A1%E7%BD%91.png	127.0.0.1:51554	200	1.380909ms
+2026/03/06 11:03:19 [GET]	/static/uploads/test/PLC%E8%AE%BE%E5%A4%87%E9%85%8D%E7%BD%AE%E4%BF%A1%E6%81%AF.png	127.0.0.1:51556	200	309.173µs
+2026/03/06 11:05:08 [GET]	/api/v1/auth/validate	127.0.0.1:51584	401	57.14µs
+2026/03/06 11:05:08 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fwww.xump.cn%2Fmark%2F&client_id=mark-live	127.0.0.1:51586	200	59.038µs
+2026/03/06 11:05:08 [GET]	/api/v1/auth/validate	127.0.0.1:51596	401	50.357µs
+redirect_url https://www.xump.cn/mark/?code=99bdf686eb4df7bb92e0ec2a192477ac16dec1a21b986f7b
+2026/03/06 11:05:23 [POST]	/api/v1/auth/login	127.0.0.1:51600	200	86.731836ms
+2026/03/06 11:05:23 [GET]	/api/v1/auth/validate	127.0.0.1:51602	401	51.65µs
+2026/03/06 11:05:23 [POST]	/api/v1/auth/token-by-code	127.0.0.1:51606	200	1.300048ms
+2026/03/06 11:05:23 [GET]	/api/v1/auth/validate	127.0.0.1:51608	200	1.0592ms
+2026/03/06 11:05:23 [GET]	/api/v1/auth/me	127.0.0.1:51610	200	955.747µs
+2026/03/06 11:05:23 [GET]	/static/uploads/test/%E7%94%9F%E4%BA%A7%E8%BF%90%E8%A1%8C%E8%AE%B0%E5%BD%95.png	127.0.0.1:51614	200	793.909µs
+2026/03/06 11:05:23 [GET]	/static/uploads/test/%E7%AE%A1%E7%BD%91.png	127.0.0.1:51616	200	1.502734ms
+2026/03/06 11:05:23 [GET]	/static/uploads/test/PLC%E8%AE%BE%E5%A4%87%E9%85%8D%E7%BD%AE%E4%BF%A1%E6%81%AF.png	127.0.0.1:51618	200	381.685µs
+2026/03/06 11:06:57 [POST]	/api/v1/auth/logout	127.0.0.1:51636	200	66.551µs
+2026/03/06 11:06:57 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fwww.xump.cn%2Fmark%2Fprofile&client_id=mark-live	127.0.0.1:51638	200	51.796µs
+2026/03/06 11:06:58 [GET]	/api/v1/auth/validate	127.0.0.1:51646	401	37.556µs
+redirect_url https://www.xump.cn/mark/profile?code=f2271c8d5cbc3aa0b86c6e422676569f1a5c87717a17194a
+2026/03/06 11:07:00 [POST]	/api/v1/auth/login	127.0.0.1:51648	200	85.471703ms
+2026/03/06 11:07:00 [GET]	/api/v1/auth/validate	127.0.0.1:51650	401	50.863µs
+2026/03/06 11:07:00 [POST]	/api/v1/auth/token-by-code	127.0.0.1:51654	200	1.188717ms
+2026/03/06 11:07:00 [GET]	/api/v1/auth/validate	127.0.0.1:51656	200	1.248468ms
+2026/03/06 11:07:00 [GET]	/api/v1/auth/me	127.0.0.1:51658	200	1.129071ms
+2026/03/06 11:07:45 [POST]	/api/v1/auth/upload	127.0.0.1:51676	200	1.510035ms
+2026/03/06 11:07:45 [GET]	/static/uploads/xump/%E6%B5%81%E9%87%8F%E8%AE%A1.svg	127.0.0.1:51680	200	121.614µs
+2026/03/06 11:07:47 [GET]	/api/v1/auth/validate	127.0.0.1:51686	200	1.122688ms
+2026/03/06 11:07:47 [GET]	/api/v1/auth/me	127.0.0.1:51688	200	1.090506ms
+2026/03/06 11:07:51 [GET]	/api/v1/auth/validate	127.0.0.1:51696	200	1.101388ms
+2026/03/06 11:07:51 [GET]	/api/v1/auth/me	127.0.0.1:51698	200	17.502601ms
+2026/03/06 11:08:16 [POST]	/api/v1/auth/logout	127.0.0.1:51714	200	56.805µs
+2026/03/06 11:08:16 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fwww.xump.cn%2Fmark%2Fprofile&client_id=mark-live	127.0.0.1:51716	200	64.771µs
+2026/03/06 11:08:16 [GET]	/api/v1/auth/validate	127.0.0.1:51722	401	99.874µs
+2026/03/06 11:14:42 [GET]	/api/v1/auth/validate	127.0.0.1:51794	200	1.197426ms
+2026/03/06 11:14:42 [GET]	/api/v1/auth/me	127.0.0.1:51796	200	1.096467ms
+2026/03/06 11:14:50 [GET]	/api/v1/auth/validate	127.0.0.1:51808	401	51.779µs
+2026/03/06 11:14:50 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fwww.xump.cn%2Fmark%2F&client_id=mark-live	127.0.0.1:51810	200	81.957µs
+2026/03/06 11:14:51 [GET]	/api/v1/auth/validate	127.0.0.1:51820	401	35.864µs
+2026/03/06 11:15:11 [GET]	/api/v1/auth/validate	127.0.0.1:51828	401	38.803µs
+2026/03/06 11:15:19 [POST]	/api/v1/auth/login	127.0.0.1:51832	200	69.662037ms
+2026/03/06 11:15:19 [GET]	/api/v1/auth/validate	127.0.0.1:51834	200	1.050988ms
+2026/03/06 11:15:25 [POST]	/api/v1/auth/logout	127.0.0.1:51836	200	51.813µs
+2026/03/06 11:15:37 [GET]	/api/v1/auth/validate	127.0.0.1:51840	401	37.832µs
+redirect_url https://www.xump.cn/mark/?code=6b720e3a5c911d413d077180edb3a268bf2ded07309220df
+2026/03/06 11:15:45 [POST]	/api/v1/auth/login	127.0.0.1:51844	200	70.907356ms
+2026/03/06 11:15:45 [GET]	/api/v1/auth/validate	127.0.0.1:51846	401	41.65µs
+2026/03/06 11:15:45 [POST]	/api/v1/auth/token-by-code	127.0.0.1:51850	200	1.292474ms
+2026/03/06 11:15:45 [GET]	/api/v1/auth/validate	127.0.0.1:51852	200	1.092081ms
+2026/03/06 11:15:45 [GET]	/api/v1/auth/me	127.0.0.1:51854	200	1.310009ms
+2026/03/06 11:15:45 [GET]	/static/uploads/test/%E7%94%9F%E4%BA%A7%E8%BF%90%E8%A1%8C%E8%AE%B0%E5%BD%95.png	127.0.0.1:51860	200	1.029321ms
+2026/03/06 11:15:45 [GET]	/static/uploads/test/%E7%AE%A1%E7%BD%91.png	127.0.0.1:51858	200	1.722341ms
+2026/03/06 11:15:45 [GET]	/static/uploads/test/PLC%E8%AE%BE%E5%A4%87%E9%85%8D%E7%BD%AE%E4%BF%A1%E6%81%AF.png	127.0.0.1:51862	200	362.536µs
+2026/03/06 11:18:22 [GET]	/api/v1/auth/validate	127.0.0.1:51898	401	39.284µs
+2026/03/06 11:18:22 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fxump.cn%2Fmark%2F&client_id=mark-live	127.0.0.1:51900	200	53.032µs
+2026/03/06 11:18:22 [GET]	/api/v1/auth/validate	127.0.0.1:51910	401	36.745µs
+2026/03/06 11:19:40 [GET]	/api/v1/auth/validate	127.0.0.1:51970	401	61.602µs
+2026/03/06 11:19:40 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fxump.cn%2Fmark%2F&client_id=mark-live	127.0.0.1:51972	200	71.269µs
+2026/03/06 11:19:41 [GET]	/api/v1/auth/validate	127.0.0.1:51986	401	46.437µs
+2026/03/06 11:19:44 [GET]	/api/v1/auth/validate	127.0.0.1:51990	401	35.812µs
+2026/03/06 11:19:44 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fxump.cn%2Fmark%2F&client_id=mark-live	127.0.0.1:51992	200	57.613µs
+2026/03/06 11:19:45 [GET]	/api/v1/auth/validate	127.0.0.1:51998	401	39.231µs
+2026/03/06 11:20:19 [GET]	/api/v1/auth/validate	127.0.0.1:52006	401	50.972µs
+2026/03/06 11:20:19 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fxump.cn%2Fmark%2F&client_id=mark-live	127.0.0.1:52008	200	64.08µs
+2026/03/06 11:20:20 [GET]	/api/v1/auth/validate	127.0.0.1:52014	401	90.906µs
+redirect_url https://xump.cn/mark/?code=34e1ea2c3a2a3b9dc3f99fbfe58897a22ed579162ff55600
+2026/03/06 11:20:30 [POST]	/api/v1/auth/login	127.0.0.1:52018	200	71.098868ms
+2026/03/06 11:20:30 [GET]	/api/v1/auth/validate	127.0.0.1:52020	401	39.126µs
+2026/03/06 11:20:30 [POST]	/api/v1/auth/token-by-code	127.0.0.1:52024	200	1.12322ms
+2026/03/06 11:20:30 [GET]	/api/v1/auth/validate	127.0.0.1:52026	200	1.212422ms
+2026/03/06 11:20:30 [GET]	/api/v1/auth/me	127.0.0.1:52028	200	954.723µs
+2026/03/06 11:39:34 [GET]	/api/v1/auth/validate	127.0.0.1:52244	401	48.032µs
+2026/03/06 11:39:35 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fxump.cn%2Fmark%2F&client_id=mark-live	127.0.0.1:52246	200	73.748µs
+2026/03/06 11:39:35 [GET]	/api/v1/auth/validate	127.0.0.1:52252	401	36.591µs
+redirect_url https://xump.cn/mark/?code=e14386cb6839cd3f55bae3a7f5bf4150f3c0dee04464ccc7
+2026/03/06 11:39:37 [POST]	/api/v1/auth/login	127.0.0.1:52254	200	71.282509ms
+2026/03/06 11:39:37 [GET]	/api/v1/auth/validate	127.0.0.1:52256	401	38.442µs
+2026/03/06 11:39:37 [POST]	/api/v1/auth/token-by-code	127.0.0.1:52260	200	1.294851ms
+2026/03/06 11:39:38 [GET]	/api/v1/auth/validate	127.0.0.1:52262	200	1.148332ms
+2026/03/06 11:39:38 [GET]	/api/v1/auth/me	127.0.0.1:52264	200	1.056397ms
+2026/03/06 11:43:03 [GET]	/api/v1/auth/validate	127.0.0.1:52308	200	1.134812ms
+2026/03/06 11:43:03 [GET]	/api/v1/auth/me	127.0.0.1:52310	200	1.167525ms
+2026/03/06 11:49:24 [GET]	/api/v1/auth/validate	127.0.0.1:52402	200	1.295632ms
+2026/03/06 11:49:24 [GET]	/api/v1/auth/me	127.0.0.1:52404	200	1.297232ms
+2026/03/06 12:39:13 [GET]	/api/v1/auth/validate	127.0.0.1:52956	401	35.208µs
+2026/03/06 12:39:13 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fxump.cn%2Fmark%2Fadd&client_id=mark-live	127.0.0.1:52958	200	79.559µs
+2026/03/06 12:39:34 [GET]	/api/v1/auth/validate	127.0.0.1:52970	401	53.846µs
+2026/03/06 12:39:34 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fxump.cn%2Fmark%2F&client_id=mark-live	127.0.0.1:52978	200	65.012µs
+2026/03/06 12:39:35 [GET]	/api/v1/auth/validate	127.0.0.1:52982	401	34.162µs
+2026/03/06 12:39:35 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fxump.cn%2Fmark%2F&client_id=mark-live	127.0.0.1:52984	200	39.476µs
+2026/03/06 12:40:11 [GET]	/api/v1/auth/validate	127.0.0.1:52994	401	49.328µs
+2026/03/06 12:40:11 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fxump.cn%2Fmark%2F&client_id=mark-live	127.0.0.1:52996	200	61.609µs
+2026/03/06 13:39:31 [GET]	/api/v1/auth/validate	127.0.0.1:53750	401	35.078µs
+2026/03/06 13:39:38 [GET]	/api/v1/auth/validate	127.0.0.1:53760	401	50.763µs
+2026/03/06 13:39:38 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fwww.xump.cn%2Fmark%2F&client_id=mark-live	127.0.0.1:53762	200	80.618µs
+2026/03/06 13:39:39 [GET]	/api/v1/auth/validate	127.0.0.1:53768	401	44.533µs
+2026/03/06 15:51:38 [AUTH] validate failed reason=invalid_token
+2026/03/06 15:51:38 [GET]	/api/v1/auth/validate	127.0.0.1:55324	401	191.956µs
+2026/03/06 15:51:38 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fwww.xump.cn%2Fmark%2F&client_id=mark-live	127.0.0.1:55326	200	60.177µs
+2026/03/06 15:51:39 [AUTH] validate failed reason=invalid_token
+2026/03/06 15:51:39 [GET]	/api/v1/auth/validate	127.0.0.1:55336	401	121.901µs
+2026/03/06 15:51:53 [AUTH] login failed email=test@test.com reason=invalid_credentials
+2026/03/06 15:51:53 [POST]	/api/v1/auth/login	127.0.0.1:55342	401	87.807437ms
+2026/03/06 16:02:23 [GET]	/api/v1/auth/validate	127.0.0.1:55490	401	68.24µs
+2026/03/06 16:02:24 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fxump.cn%2Fmark%2F&client_id=mark-live	127.0.0.1:55492	200	95.969µs
+2026/03/06 16:02:24 [GET]	/api/v1/auth/validate	127.0.0.1:55502	401	42.049µs
+redirect_url https://xump.cn/mark/?code=a21619e946c8d2f05a3f5de0f9cd54e65a2761039d79772a
+2026/03/06 16:02:35 [POST]	/api/v1/auth/login	127.0.0.1:55508	200	70.044342ms
+2026/03/06 16:02:35 [GET]	/api/v1/auth/validate	127.0.0.1:55510	401	43.382µs
+2026/03/06 16:02:36 [POST]	/api/v1/auth/token-by-code	127.0.0.1:55514	200	1.064834ms
+2026/03/06 16:02:36 [GET]	/api/v1/auth/validate	127.0.0.1:55516	200	18.966292ms
+2026/03/06 16:02:36 [GET]	/api/v1/auth/me	127.0.0.1:55518	200	1.115133ms
+2026/03/06 16:03:54 [GET]	/api/v1/auth/validate	127.0.0.1:55540	200	1.201319ms
+2026/03/06 16:03:54 [GET]	/api/v1/auth/me	127.0.0.1:55542	200	18.293131ms
+2026/03/06 16:04:08 [GET]	/api/v1/auth/validate	127.0.0.1:55556	200	1.153179ms
+2026/03/06 16:04:08 [GET]	/api/v1/auth/me	127.0.0.1:55558	200	17.775881ms
+2026/03/06 16:04:38 [GET]	/api/v1/auth/validate	127.0.0.1:55572	401	41.902µs
+2026/03/06 16:04:38 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fxump.cn%2Fmark%2F&client_id=mark-live	127.0.0.1:55574	200	49.249µs
+2026/03/06 16:04:38 [GET]	/api/v1/auth/validate	127.0.0.1:55584	401	47.561µs
+redirect_url https://xump.cn/mark/?code=439e97df9509ebdd5d5a801b92cdcaf55f3c6eed2495786c
+2026/03/06 16:04:44 [POST]	/api/v1/auth/login	127.0.0.1:55588	200	69.713666ms
+2026/03/06 16:04:44 [GET]	/api/v1/auth/validate	127.0.0.1:55590	401	39.817µs
+2026/03/06 16:04:45 [POST]	/api/v1/auth/token-by-code	127.0.0.1:55594	200	1.187383ms
+2026/03/06 16:04:45 [GET]	/api/v1/auth/validate	127.0.0.1:55596	200	1.043705ms
+2026/03/06 16:04:45 [GET]	/api/v1/auth/me	127.0.0.1:55598	200	1.059256ms
+2026/03/06 16:22:46 [AUTH] validate failed reason=invalid_token
+2026/03/06 16:22:46 [GET]	/api/v1/auth/validate	127.0.0.1:55820	401	189.765µs
+2026/03/06 16:22:48 [AUTH] validate failed reason=invalid_token
+2026/03/06 16:22:48 [GET]	/api/v1/auth/validate	127.0.0.1:55830	401	230.587µs
+2026/03/06 16:26:55 [AUTH] validate failed reason=invalid_token
+2026/03/06 16:26:55 [GET]	/api/v1/auth/validate	127.0.0.1:55882	401	144.43µs
+2026/03/06 16:27:00 [AUTH] validate failed reason=invalid_token
+2026/03/06 16:27:00 [GET]	/api/v1/auth/validate	127.0.0.1:55892	401	166.774µs
+2026/03/06 16:27:15 [GET]	/api/v1/auth/validate	127.0.0.1:55902	401	44.782µs
+2026/03/06 16:27:26 [AUTH] login failed email=test@test.com reason=invalid_credentials
+2026/03/06 16:27:26 [POST]	/api/v1/auth/login	127.0.0.1:55904	401	68.887512ms
+2026/03/06 16:27:30 [POST]	/api/v1/auth/login	127.0.0.1:55908	200	69.483492ms
+2026/03/06 16:27:30 [GET]	/api/v1/auth/validate	127.0.0.1:55910	200	1.013948ms
+2026/03/06 17:38:50 [AUTH] validate failed reason=invalid_token
+2026/03/06 17:38:50 [GET]	/api/v1/auth/validate	127.0.0.1:56716	401	250.295µs
+2026/03/06 17:38:50 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fwww.xump.cn%2Fmark%2F&client_id=mark-live	127.0.0.1:56718	200	67.567µs
+2026/03/06 17:38:50 [AUTH] validate failed reason=invalid_token
+2026/03/06 17:38:50 [GET]	/api/v1/auth/validate	127.0.0.1:56728	401	141.202µs
+2026/03/06 20:06:30 [GET]	/api/v1/auth/validate	127.0.0.1:58466	401	44.154µs
+2026/03/06 20:06:37 [POST]	/api/v1/auth/login	127.0.0.1:58468	200	70.188532ms
+2026/03/06 20:06:37 [GET]	/api/v1/auth/validate	127.0.0.1:58470	200	1.044209ms
+2026/03/06 20:06:47 [GET]	/api/v1/auth/validate	127.0.0.1:58486	200	1.189739ms
+2026/03/06 20:06:47 [GET]	/api/v1/auth/me	127.0.0.1:58488	200	1.009652ms
+2026/03/06 21:21:30 [GET]	/api/v1/auth/validate	127.0.0.1:59374	401	32.746µs
+2026/03/06 21:21:30 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fxump.cn%2Fmark%2F&client_id=mark-live	127.0.0.1:59376	200	97.576µs
+2026/03/06 21:21:30 [GET]	/api/v1/auth/validate	127.0.0.1:59392	401	45.34µs
+redirect_url https://xump.cn/mark/?code=92100332668e49455b76d4e40f1f3b710b78ebbb12e9bd7e
+2026/03/06 21:21:34 [POST]	/api/v1/auth/login	127.0.0.1:59396	200	70.146049ms
+2026/03/06 21:21:35 [GET]	/api/v1/auth/validate	127.0.0.1:59398	401	46.109µs
+2026/03/06 21:21:35 [POST]	/api/v1/auth/token-by-code	127.0.0.1:59406	200	1.551749ms
+2026/03/06 21:21:35 [GET]	/api/v1/auth/validate	127.0.0.1:59408	200	1.176234ms
+2026/03/06 21:21:35 [GET]	/api/v1/auth/me	127.0.0.1:59410	200	1.285472ms
+2026/03/06 23:58:35 [GET]	/api/v1/auth/validate	127.0.0.1:33042	401	48.435µs
+2026/03/06 23:58:35 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fxump.cn%2Fmark%2F&client_id=mark-live	127.0.0.1:33044	200	72.423µs
+2026/03/06 23:58:35 [GET]	/api/v1/auth/validate	127.0.0.1:33061	401	80.601µs
+redirect_url https://xump.cn/mark/?code=f3555cc47cce517a56ab0773cb17a252d8ffcd2d717717e9
+2026/03/06 23:58:40 [POST]	/api/v1/auth/login	127.0.0.1:33062	200	70.023477ms
+2026/03/06 23:58:40 [GET]	/api/v1/auth/validate	127.0.0.1:33064	401	50.513µs
+2026/03/06 23:58:41 [POST]	/api/v1/auth/token-by-code	127.0.0.1:33072	200	1.054851ms
+2026/03/06 23:58:41 [GET]	/api/v1/auth/validate	127.0.0.1:33074	200	1.049363ms
+2026/03/06 23:58:41 [GET]	/api/v1/auth/me	127.0.0.1:33076	200	1.120903ms
+2026/03/07 11:41:47 [GET]	/api/v1/auth/validate	127.0.0.1:41296	401	40.85µs
+2026/03/07 11:41:47 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fxump.cn%2Fmark%2F&client_id=mark-live	127.0.0.1:41300	200	61.418µs
+2026/03/07 11:41:48 [GET]	/api/v1/auth/validate	127.0.0.1:41316	401	35.077µs
+[mysql] 2026/03/07 11:41:53 connection.go:49: closing bad idle connection: unexpected read from socket
+redirect_url https://xump.cn/mark/?code=525d2d8f230ff9cd9bdacf18b13bbcc696bbdc21ef7783c5
+2026/03/07 11:41:53 [POST]	/api/v1/auth/login	127.0.0.1:41320	200	72.150356ms
+2026/03/07 11:41:53 [GET]	/api/v1/auth/validate	127.0.0.1:41326	401	48.977µs
+2026/03/07 11:41:53 [POST]	/api/v1/auth/token-by-code	127.0.0.1:41334	200	1.204281ms
+2026/03/07 11:41:54 [GET]	/api/v1/auth/validate	127.0.0.1:41336	200	1.097986ms
+2026/03/07 11:41:54 [GET]	/api/v1/auth/me	127.0.0.1:41338	200	1.144539ms
+2026/03/07 12:56:28 [GET]	/static-collected/.env	127.0.0.1:43940	404	50.816µs
+2026/03/07 12:56:28 [GET]	/static-html/.env	127.0.0.1:43942	404	18.519µs
+2026/03/07 12:56:29 [GET]	/static-root/.env	127.0.0.1:43944	404	21.323µs
+2026/03/07 12:56:29 [GET]	/static/.env	127.0.0.1:43948	404	75.654µs
+2026/03/07 12:56:29 [GET]	/static/js/*.chunk.js	127.0.0.1:43950	404	80.154µs
+2026/03/07 12:56:29 [GET]	/static/js/main.11bc02d8.chunk.js	127.0.0.1:43952	404	72.02µs
+2026/03/07 12:56:29 [GET]	/static/js/main.1b34ee2a.js	127.0.0.1:43954	404	44.376µs
+2026/03/07 12:56:30 [GET]	/static/js/main.335d17a0.js	127.0.0.1:43956	404	54.31µs
+2026/03/07 12:56:30 [GET]	/static/js/main.36e5ec99.js	127.0.0.1:43958	404	59.022µs
+2026/03/07 12:56:30 [GET]	/static/js/main.48389ac6.js	127.0.0.1:43960	404	84.673µs
+2026/03/07 12:56:30 [GET]	/static/js/main.4aa2819f.js	127.0.0.1:43962	404	61.557µs
+2026/03/07 12:56:30 [GET]	/static/js/main.602cea98.chunk.js	127.0.0.1:43964	404	100.047µs
+2026/03/07 12:56:31 [GET]	/static/js/main.87c766e3.js	127.0.0.1:43966	404	50.126µs
+2026/03/07 12:56:31 [GET]	/static/js/main.89c971fa.js	127.0.0.1:43968	404	51.786µs
+2026/03/07 12:56:31 [GET]	/static/js/main.8c18b542.js	127.0.0.1:43970	404	83.685µs
+2026/03/07 12:56:31 [GET]	/static/js/main.bfa51071.js	127.0.0.1:43972	404	48.422µs
+2026/03/07 12:56:31 [GET]	/static/js/main.ef8ecb99.chunk.js	127.0.0.1:43974	404	66.001µs
+2026/03/07 12:56:32 [GET]	/static_prod/.env	127.0.0.1:43976	404	20.066µs
+2026/03/07 12:56:32 [GET]	/static_root/.env	127.0.0.1:43978	404	11.874µs
+2026/03/07 12:56:32 [GET]	/static_user/.env	127.0.0.1:43980	404	17.282µs
+2026/03/07 12:56:32 [GET]	/staticfiles/.env	127.0.0.1:43982	404	49.086µs
+2026/03/07 18:05:46 [GET]	/api/v1/auth/validate	127.0.0.1:48634	401	31.657µs
+2026/03/07 18:05:46 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fxump.cn%2Fmark%2F&client_id=mark-live	127.0.0.1:48638	200	73.726µs
+2026/03/07 18:05:46 [GET]	/api/v1/auth/validate	127.0.0.1:48654	401	85.034µs
+redirect_url https://xump.cn/mark/?code=04c0285b6e250c60497a1964451fa410db70989f6401c069
+2026/03/07 18:05:49 [POST]	/api/v1/auth/login	127.0.0.1:48656	200	70.7394ms
+2026/03/07 18:05:49 [GET]	/api/v1/auth/validate	127.0.0.1:48658	401	33.485µs
+2026/03/07 18:05:49 [POST]	/api/v1/auth/token-by-code	127.0.0.1:48666	200	20.403803ms
+2026/03/07 18:05:49 [GET]	/api/v1/auth/validate	127.0.0.1:48668	200	1.092001ms
+2026/03/07 18:05:49 [GET]	/api/v1/auth/me	127.0.0.1:48670	200	1.034519ms
+2026/03/07 20:21:13 [GET]	/api/v1/auth/validate	127.0.0.1:50292	401	42.842µs
+2026/03/07 20:21:13 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fxump.cn%2Fmark%2F&client_id=mark-live	127.0.0.1:50296	200	70.695µs
+2026/03/07 20:21:13 [GET]	/api/v1/auth/validate	127.0.0.1:50308	401	52.011µs
+2026/03/08 11:07:34 [GET]	/api/v1/auth/validate	127.0.0.1:60442	401	57.476µs
+[mysql] 2026/03/08 11:07:37 connection.go:49: closing bad idle connection: unexpected read from socket
+2026/03/08 11:07:38 [POST]	/api/v1/auth/login	127.0.0.1:60444	200	88.963034ms
+2026/03/08 11:07:38 [GET]	/api/v1/auth/validate	127.0.0.1:60450	200	1.17134ms
+2026/03/08 11:07:39 [POST]	/api/v1/auth/logout	127.0.0.1:60452	200	40.802µs
+2026/03/08 11:07:47 [GET]	/api/v1/auth/validate	127.0.0.1:60462	401	78.112µs
+2026/03/08 11:07:47 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fxump.cn%2Fmark%2F&client_id=mark-live	127.0.0.1:60464	200	90.578µs
+2026/03/08 11:08:01 [GET]	/api/v1/auth/validate	127.0.0.1:60484	401	35.973µs
+2026/03/08 11:08:01 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fxump.cn%2Fmark%2F&client_id=mark-live	127.0.0.1:60486	200	65.298µs
+2026/03/08 11:08:01 [GET]	/api/v1/auth/validate	127.0.0.1:60494	401	40.159µs
+redirect_url https://xump.cn/mark/?code=071579de72c6872acf134e249f85a3478f6943738b3600f4
+2026/03/08 11:08:05 [POST]	/api/v1/auth/login	127.0.0.1:60496	200	70.548792ms
+2026/03/08 11:08:05 [GET]	/api/v1/auth/validate	127.0.0.1:60498	401	37.203µs
+2026/03/08 11:08:05 [POST]	/api/v1/auth/token-by-code	127.0.0.1:60502	200	1.240953ms
+2026/03/08 11:08:05 [GET]	/api/v1/auth/validate	127.0.0.1:60504	200	1.127018ms
+2026/03/08 11:08:05 [GET]	/api/v1/auth/me	127.0.0.1:60506	200	1.071013ms
+2026/03/08 19:08:21 [GET]	/api/v1/auth/validate	127.0.0.1:37788	401	36.22µs
+2026/03/08 19:08:21 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fxump.cn%2Fmark%2F&client_id=mark-live	127.0.0.1:37790	200	62.916µs
+2026/03/08 19:08:21 [GET]	/api/v1/auth/validate	127.0.0.1:37806	401	84.385µs
+[mysql] 2026/03/08 19:08:25 connection.go:49: closing bad idle connection: unexpected read from socket
+redirect_url https://xump.cn/mark/?code=21509ec2bb59905d1448bca5496c1bcb0c97beabef4143b5
+2026/03/08 19:08:25 [POST]	/api/v1/auth/login	127.0.0.1:37812	200	99.445716ms
+2026/03/08 19:08:25 [GET]	/api/v1/auth/validate	127.0.0.1:37818	401	37.057µs
+2026/03/08 19:08:26 [POST]	/api/v1/auth/token-by-code	127.0.0.1:37826	200	1.191218ms
+2026/03/08 19:08:26 [GET]	/api/v1/auth/validate	127.0.0.1:37828	200	1.259021ms
+2026/03/08 19:08:26 [GET]	/api/v1/auth/me	127.0.0.1:37830	200	990.091µs
+2026/03/08 20:36:51 [GET]	/api/v1/auth/validate	127.0.0.1:38858	401	28.717µs
+2026/03/08 20:36:51 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fxump.cn%2Fmark%2F&client_id=mark-live	127.0.0.1:38860	200	64.398µs
+2026/03/08 20:36:51 [GET]	/api/v1/auth/validate	127.0.0.1:38872	401	46.942µs
+redirect_url https://xump.cn/mark/?code=1501ffbbd6c06b1b5aef5fd62e5a27f71801a95025e5d743
+2026/03/08 20:36:54 [POST]	/api/v1/auth/login	127.0.0.1:38874	200	71.080865ms
+2026/03/08 20:36:54 [GET]	/api/v1/auth/validate	127.0.0.1:38876	401	36.163µs
+2026/03/08 20:36:54 [POST]	/api/v1/auth/token-by-code	127.0.0.1:38880	200	1.140007ms
+2026/03/08 20:36:55 [GET]	/api/v1/auth/validate	127.0.0.1:38882	200	1.036383ms
+2026/03/08 20:36:55 [GET]	/api/v1/auth/me	127.0.0.1:38884	200	1.139753ms
+2026/03/08 21:47:58 [GET]	/api/v1/auth/validate	127.0.0.1:39706	401	41.15µs
+2026/03/08 21:47:58 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fxump.cn%2Fmark%2F&client_id=mark-live	127.0.0.1:39710	200	61.071µs
+2026/03/08 21:47:58 [GET]	/api/v1/auth/validate	127.0.0.1:39722	401	42.534µs
+redirect_url https://xump.cn/mark/?code=df331e7923bad502428ea7e4589b3e21ea06a4874b741865
+2026/03/08 21:48:03 [POST]	/api/v1/auth/login	127.0.0.1:39726	200	70.860021ms
+2026/03/08 21:48:03 [GET]	/api/v1/auth/validate	127.0.0.1:39728	401	35.351µs
+2026/03/08 21:48:03 [POST]	/api/v1/auth/token-by-code	127.0.0.1:39732	200	1.233469ms
+2026/03/08 21:48:03 [GET]	/api/v1/auth/validate	127.0.0.1:39734	200	1.370503ms
+2026/03/08 21:48:03 [GET]	/api/v1/auth/me	127.0.0.1:39736	200	1.260674ms
+2026/03/09 09:46:05 [GET]	/api/v1/auth/validate	127.0.0.1:47906	401	31.46µs
+2026/03/09 09:46:05 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fxump.cn%2Fmark%2F&client_id=mark-live	127.0.0.1:47910	200	169.275µs
+2026/03/09 09:46:06 [GET]	/api/v1/auth/validate	127.0.0.1:47926	401	41.873µs
+[mysql] 2026/03/09 09:46:09 connection.go:49: closing bad idle connection: unexpected read from socket
+redirect_url https://xump.cn/mark/?code=92252100b292c5cd594a151ad5165628ba42d68e8c02c8f7
+2026/03/09 09:46:09 [POST]	/api/v1/auth/login	127.0.0.1:47928	200	72.640805ms
+2026/03/09 09:46:09 [GET]	/api/v1/auth/validate	127.0.0.1:47934	401	33.971µs
+2026/03/09 09:46:15 [POST]	/api/v1/auth/token-by-code	127.0.0.1:47942	200	1.194255ms
+2026/03/09 09:46:15 [GET]	/api/v1/auth/validate	127.0.0.1:47944	200	1.220775ms
+2026/03/09 09:46:15 [GET]	/api/v1/auth/me	127.0.0.1:47946	200	1.180384ms
+2026/03/09 09:46:42 [GET]	/api/v1/auth/validate	127.0.0.1:47978	401	48.043µs
+2026/03/09 09:46:42 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fxump.cn%2Fmark%2F&client_id=mark-live	127.0.0.1:47982	200	62.719µs
+2026/03/09 09:46:44 [GET]	/api/v1/auth/validate	127.0.0.1:47994	401	41.176µs
+2026/03/09 09:46:45 [GET]	/api/v1/auth/validate	127.0.0.1:47996	401	33.561µs
+2026/03/09 09:46:45 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fxump.cn%2Fmark%2F&client_id=mark-live	127.0.0.1:47998	200	49.277µs
+2026/03/09 09:46:46 [GET]	/api/v1/auth/validate	127.0.0.1:48010	401	46.669µs
+redirect_url https://xump.cn/mark/?code=2532c57a161b7e7e2cdc179c7f7b02ce7190a7421f43532b
+2026/03/09 09:46:59 [POST]	/api/v1/auth/login	127.0.0.1:48012	200	82.872392ms
+2026/03/09 09:46:59 [GET]	/api/v1/auth/validate	127.0.0.1:48014	401	32.556µs
+2026/03/09 09:47:02 [POST]	/api/v1/auth/token-by-code	127.0.0.1:48024	200	17.646721ms
+2026/03/09 09:47:02 [GET]	/api/v1/auth/validate	127.0.0.1:48026	200	11.811271ms
+2026/03/09 09:47:02 [GET]	/api/v1/auth/me	127.0.0.1:48028	200	1.146941ms
+2026/03/09 09:47:02 [GET]	/static/uploads/test/%E7%94%9F%E4%BA%A7%E8%BF%90%E8%A1%8C%E8%AE%B0%E5%BD%95.png	127.0.0.1:48032	200	805.168µs
+2026/03/09 09:47:02 [GET]	/static/uploads/test/%E7%AE%A1%E7%BD%91.png	127.0.0.1:48034	200	1.481993ms
+2026/03/09 09:47:02 [GET]	/static/uploads/test/PLC%E8%AE%BE%E5%A4%87%E9%85%8D%E7%BD%AE%E4%BF%A1%E6%81%AF.png	127.0.0.1:48036	200	313.952µs
+2026/03/09 09:47:33 [GET]	/api/v1/auth/validate	127.0.0.1:48052	200	1.108738ms
+2026/03/09 09:47:33 [GET]	/api/v1/auth/me	127.0.0.1:48054	200	1.178804ms
+2026/03/09 09:47:43 [GET]	/api/v1/auth/validate	127.0.0.1:48066	200	1.04535ms
+2026/03/09 09:47:43 [GET]	/api/v1/auth/me	127.0.0.1:48068	200	1.072407ms
+2026/03/09 09:47:58 [GET]	/api/v1/auth/validate	127.0.0.1:48078	401	68.465µs
+2026/03/09 09:47:58 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fxump.cn%2Fmark%2F&client_id=mark-live	127.0.0.1:48082	200	60.072µs
+2026/03/09 09:47:58 [GET]	/api/v1/auth/validate	127.0.0.1:48088	401	55.492µs
+redirect_url https://xump.cn/mark/?code=7580c8eb35b639bb3ba30f91a9de3ad084169642229aa713
+2026/03/09 09:48:12 [POST]	/api/v1/auth/login	127.0.0.1:48092	200	70.577758ms
+2026/03/09 09:48:12 [GET]	/api/v1/auth/validate	127.0.0.1:48094	401	56.036µs
+2026/03/09 09:48:12 [POST]	/api/v1/auth/token-by-code	127.0.0.1:48098	200	1.263462ms
+2026/03/09 09:48:12 [GET]	/api/v1/auth/validate	127.0.0.1:48100	200	1.105755ms
+2026/03/09 09:48:12 [GET]	/api/v1/auth/me	127.0.0.1:48102	200	1.063585ms
+2026/03/09 09:48:13 [GET]	/static/uploads/test/%E7%94%9F%E4%BA%A7%E8%BF%90%E8%A1%8C%E8%AE%B0%E5%BD%95.png	127.0.0.1:48106	200	378.382µs
+2026/03/09 09:48:13 [GET]	/static/uploads/test/%E7%AE%A1%E7%BD%91.png	127.0.0.1:48108	200	1.60507ms
+2026/03/09 09:48:13 [GET]	/static/uploads/test/PLC%E8%AE%BE%E5%A4%87%E9%85%8D%E7%BD%AE%E4%BF%A1%E6%81%AF.png	127.0.0.1:48110	200	339.268µs
+2026/03/09 09:49:27 [GET]	/api/v1/auth/validate	127.0.0.1:48130	401	48.513µs
+2026/03/09 09:49:27 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fxump.cn%2Fmark%2F&client_id=mark-live	127.0.0.1:48132	200	47.564µs
+2026/03/09 09:49:27 [GET]	/api/v1/auth/validate	127.0.0.1:48138	401	46.076µs
+redirect_url https://xump.cn/mark/?code=eb78db3ecffa337c0405a9484bfbc87d279ea3ea2ad70f71
+2026/03/09 09:49:45 [POST]	/api/v1/auth/login	127.0.0.1:48144	200	72.704685ms
+2026/03/09 09:49:45 [GET]	/api/v1/auth/validate	127.0.0.1:48146	401	50.842µs
+2026/03/09 09:49:45 [POST]	/api/v1/auth/token-by-code	127.0.0.1:48154	200	1.177292ms
+2026/03/09 09:49:45 [GET]	/api/v1/auth/validate	127.0.0.1:48156	200	1.293561ms
+2026/03/09 09:49:45 [GET]	/api/v1/auth/me	127.0.0.1:48158	200	1.81287ms
+2026/03/09 09:49:45 [GET]	/static/uploads/test/%E7%AE%A1%E7%BD%91.png	127.0.0.1:48164	200	1.735672ms
+2026/03/09 09:49:45 [GET]	/static/uploads/test/%E7%94%9F%E4%BA%A7%E8%BF%90%E8%A1%8C%E8%AE%B0%E5%BD%95.png	127.0.0.1:48166	200	809.607µs
+2026/03/09 09:49:45 [GET]	/static/uploads/test/PLC%E8%AE%BE%E5%A4%87%E9%85%8D%E7%BD%AE%E4%BF%A1%E6%81%AF.png	127.0.0.1:48168	200	340.763µs
+2026/03/09 14:24:06 [GET]	/api/v1/auth/validate	127.0.0.1:51254	401	52.518µs
+2026/03/09 14:24:06 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fxump.cn%2Fmark%2Fadd&client_id=mark-live	127.0.0.1:51256	200	76.222µs
+2026/03/09 14:24:07 [GET]	/api/v1/auth/validate	127.0.0.1:51262	401	53.594µs
+2026/03/09 14:24:07 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fxump.cn%2Fmark%2Fadd&client_id=mark-live	127.0.0.1:51264	200	39.582µs
+2026/03/09 14:24:07 [GET]	/api/v1/auth/validate	127.0.0.1:51270	401	43.246µs
+redirect_url https://xump.cn/mark/add?code=1f05f24ef174b113246a8382839b956fdf6065c4fd19f46f
+2026/03/09 14:24:24 [POST]	/api/v1/auth/login	127.0.0.1:51274	200	70.666602ms
+2026/03/09 14:24:24 [GET]	/api/v1/auth/validate	127.0.0.1:51276	401	57.57µs
+2026/03/09 14:24:25 [POST]	/api/v1/auth/token-by-code	127.0.0.1:51284	200	1.046216ms
+2026/03/09 14:24:25 [GET]	/api/v1/auth/validate	127.0.0.1:51286	200	1.257369ms
+2026/03/09 14:24:25 [GET]	/api/v1/auth/me	127.0.0.1:51288	200	1.183208ms
+2026/03/09 14:27:20 [AUTH] validate failed reason=invalid_token
+2026/03/09 14:27:20 [GET]	/api/v1/auth/validate	127.0.0.1:51336	401	153.296µs
+2026/03/09 14:27:20 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fwww.xump.cn%2Fmark%2F&client_id=mark-live	127.0.0.1:51340	200	51.254µs
+2026/03/09 14:27:21 [AUTH] validate failed reason=invalid_token
+2026/03/09 14:27:21 [GET]	/api/v1/auth/validate	127.0.0.1:51350	401	173.177µs
+redirect_url https://www.xump.cn/mark/?code=f5ea03daafa49ae90b612593579a535e0b343f25e978d107
+2026/03/09 14:27:31 [POST]	/api/v1/auth/login	127.0.0.1:51356	200	70.606493ms
+2026/03/09 14:27:31 [AUTH] validate failed reason=invalid_token
+2026/03/09 14:27:31 [GET]	/api/v1/auth/validate	127.0.0.1:51358	401	146.605µs
+2026/03/09 14:27:32 [POST]	/api/v1/auth/token-by-code	127.0.0.1:51362	200	1.133453ms
+2026/03/09 14:27:32 [GET]	/api/v1/auth/validate	127.0.0.1:51364	200	1.174069ms
+2026/03/09 14:27:32 [GET]	/api/v1/auth/me	127.0.0.1:51366	200	1.242537ms
+2026/03/09 14:27:32 [GET]	/static/uploads/test/%E7%AE%A1%E7%BD%91.png	127.0.0.1:51370	200	1.417362ms
+2026/03/09 14:27:32 [GET]	/static/uploads/test/%E7%94%9F%E4%BA%A7%E8%BF%90%E8%A1%8C%E8%AE%B0%E5%BD%95.png	127.0.0.1:51372	200	753.708µs
+2026/03/09 14:27:32 [GET]	/static/uploads/test/PLC%E8%AE%BE%E5%A4%87%E9%85%8D%E7%BD%AE%E4%BF%A1%E6%81%AF.png	127.0.0.1:51374	200	336.414µs
+2026/03/09 14:28:02 [POST]	/api/v1/auth/upload	127.0.0.1:51386	200	7.392088ms
+2026/03/09 14:28:02 [GET]	/static/uploads/test/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260130114242_401_81.png	127.0.0.1:51390	200	1.166634ms
+2026/03/09 14:50:32 [GET]	/api/v1/auth/validate	127.0.0.1:51660	200	1.089257ms
+2026/03/09 14:50:32 [GET]	/api/v1/auth/me	127.0.0.1:51662	200	13.35569ms
+2026/03/09 14:51:04 [POST]	/api/v1/auth/upload	127.0.0.1:51674	200	45.775633ms
+2026/03/09 14:51:04 [GET]	/static/uploads/test/player.png	127.0.0.1:51678	200	2.693461ms
+2026/03/09 15:04:28 [GET]	/api/v1/auth/validate	127.0.0.1:51838	200	1.163887ms
+2026/03/09 15:04:28 [GET]	/api/v1/auth/me	127.0.0.1:51840	200	2.376816ms
+2026/03/09 15:04:28 [GET]	/static/uploads/test/player.png	127.0.0.1:51852	200	2.581596ms
+2026/03/09 15:04:29 [GET]	/static/uploads/test/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260130114242_401_81.png	127.0.0.1:51854	200	1.661664ms
+2026/03/09 15:04:30 [POST]	/api/v1/auth/logout	127.0.0.1:51858	200	63.125µs
+2026/03/09 15:04:31 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fxump.cn%2Fmark%2Fprofile&client_id=mark-live	127.0.0.1:51860	200	63.935µs
+2026/03/09 15:04:31 [GET]	/api/v1/auth/validate	127.0.0.1:51866	401	36.364µs
+redirect_url https://xump.cn/mark/profile?code=26202c36773554577b3b4d7566109b7f318c056fad3dbae7
+2026/03/09 15:04:34 [POST]	/api/v1/auth/login	127.0.0.1:51868	200	71.198522ms
+2026/03/09 15:04:34 [GET]	/api/v1/auth/validate	127.0.0.1:51870	401	51.924µs
+2026/03/09 15:04:35 [POST]	/api/v1/auth/token-by-code	127.0.0.1:51874	200	1.268588ms
+2026/03/09 15:04:35 [GET]	/api/v1/auth/validate	127.0.0.1:51876	200	1.299392ms
+2026/03/09 15:04:35 [GET]	/api/v1/auth/me	127.0.0.1:51878	200	1.226365ms
+2026/03/09 15:06:11 [POST]	/api/v1/auth/upload	127.0.0.1:51902	200	4.078081ms
+2026/03/09 15:06:11 [GET]	/static/uploads/xump/IMG_0043.png	127.0.0.1:51906	200	877.355µs
+2026/03/09 16:29:38 [GET]	/api/v1/auth/validate	127.0.0.1:53424	200	1.668726ms
+2026/03/09 16:29:38 [GET]	/api/v1/auth/me	127.0.0.1:53426	200	1.481757ms
+2026/03/09 16:29:52 [POST]	/api/v1/auth/logout	127.0.0.1:53432	200	77.448µs
+2026/03/09 16:29:52 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fwww.xump.cn%2Fmark%2Fprofile&client_id=mark-live	127.0.0.1:53434	200	57.845µs
+2026/03/09 16:29:52 [GET]	/api/v1/auth/validate	127.0.0.1:53440	401	50.523µs
+redirect_url https://www.xump.cn/mark/profile?code=9ea49050a2c5936f8e6101cfbcce1559476758dfd7fdaf31
+2026/03/09 16:29:59 [POST]	/api/v1/auth/login	127.0.0.1:53442	200	71.085417ms
+2026/03/09 16:29:59 [GET]	/api/v1/auth/validate	127.0.0.1:53444	401	30.864µs
+2026/03/09 16:29:59 [POST]	/api/v1/auth/token-by-code	127.0.0.1:53452	200	1.126858ms
+2026/03/09 16:29:59 [GET]	/api/v1/auth/validate	127.0.0.1:53454	200	1.13981ms
+2026/03/09 16:29:59 [GET]	/api/v1/auth/me	127.0.0.1:53456	200	20.217655ms
+2026/03/09 16:30:06 [GET]	/static/uploads/xump/IMG_0043.png	127.0.0.1:53462	200	820.123µs
+2026/03/09 16:50:42 [GET]	/api/v1/auth/validate	127.0.0.1:53712	401	38.94µs
+2026/03/09 16:50:42 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fwww.xump.cn%2Fmark%2Fprofile&client_id=mark-live	127.0.0.1:53714	200	49.617µs
+2026/03/09 16:50:43 [GET]	/api/v1/auth/validate	127.0.0.1:53724	401	40.914µs
+redirect_url https://www.xump.cn/mark/profile?code=b7ecf431952b9e49fb4eb3e4353c6c394d67f1cb24299dbc
+2026/03/09 16:50:55 [POST]	/api/v1/auth/login	127.0.0.1:53730	200	70.781538ms
+2026/03/09 16:50:55 [GET]	/api/v1/auth/validate	127.0.0.1:53732	401	47.517µs
+2026/03/09 16:50:56 [POST]	/api/v1/auth/token-by-code	127.0.0.1:53740	200	1.119871ms
+2026/03/09 16:50:56 [GET]	/api/v1/auth/validate	127.0.0.1:53742	200	1.279424ms
+2026/03/09 16:50:56 [GET]	/api/v1/auth/me	127.0.0.1:53744	200	1.067033ms
+2026/03/09 16:50:58 [GET]	/static/uploads/test/player.png	127.0.0.1:53748	200	2.780231ms
+2026/03/09 16:50:58 [GET]	/static/uploads/test/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260130114242_401_81.png	127.0.0.1:53750	200	1.467534ms
+2026/03/09 16:50:58 [GET]	/static/uploads/test/%E7%94%9F%E4%BA%A7%E8%BF%90%E8%A1%8C%E8%AE%B0%E5%BD%95.png	127.0.0.1:53752	200	811.617µs
+2026/03/09 16:50:58 [GET]	/static/uploads/test/%E7%AE%A1%E7%BD%91.png	127.0.0.1:53754	200	1.490746ms
+2026/03/09 16:50:58 [GET]	/static/uploads/test/PLC%E8%AE%BE%E5%A4%87%E9%85%8D%E7%BD%AE%E4%BF%A1%E6%81%AF.png	127.0.0.1:53756	200	488.466µs
+2026/03/09 18:43:45 [GET]	/api/v1/auth/validate	127.0.0.1:55064	401	28.854µs
+2026/03/09 18:43:45 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fxump.cn%2Fmark%2F&client_id=mark-live	127.0.0.1:55068	200	105.844µs
+2026/03/09 18:43:46 [GET]	/api/v1/auth/validate	127.0.0.1:55084	401	49.078µs
+redirect_url https://xump.cn/mark/?code=d87f7ff91ecfb0d464616072dfb4b55c070a4e899672ceed
+2026/03/09 18:43:49 [POST]	/api/v1/auth/login	127.0.0.1:55086	200	70.674236ms
+2026/03/09 18:43:49 [GET]	/api/v1/auth/validate	127.0.0.1:55088	401	50.938µs
+2026/03/09 18:43:51 [POST]	/api/v1/auth/token-by-code	127.0.0.1:55096	200	1.201917ms
+2026/03/09 18:43:51 [GET]	/api/v1/auth/validate	127.0.0.1:55098	200	1.109706ms
+2026/03/09 18:43:51 [GET]	/api/v1/auth/me	127.0.0.1:55100	200	1.253747ms
+2026/03/09 20:40:18 [GET]	/api/v1/auth/validate	127.0.0.1:56734	401	82.103µs
+2026/03/09 20:40:18 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fxump.cn%2Fmark%2F&client_id=mark-live	127.0.0.1:56736	200	55.186µs
+2026/03/09 20:40:18 [GET]	/api/v1/auth/validate	127.0.0.1:56748	401	54.778µs
+2026/03/09 20:40:20 [GET]	/api/v1/auth/validate	127.0.0.1:56750	401	34.98µs
+2026/03/09 20:40:20 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fxump.cn%2Fmark%2Fadd&client_id=mark-live	127.0.0.1:56752	200	49.611µs
+2026/03/09 20:40:21 [GET]	/api/v1/auth/validate	127.0.0.1:56762	401	39.363µs
+redirect_url https://xump.cn/mark/?code=1f1254095f9186ac7c96da5b2aa9d72f944275887ff010cc
+2026/03/09 20:40:32 [POST]	/api/v1/auth/login	127.0.0.1:56766	200	69.445005ms
+2026/03/09 20:40:32 [GET]	/api/v1/auth/validate	127.0.0.1:56768	401	35.727µs
+2026/03/09 20:40:35 [POST]	/api/v1/auth/token-by-code	127.0.0.1:56776	200	1.18501ms
+2026/03/09 20:40:35 [GET]	/api/v1/auth/validate	127.0.0.1:56778	200	1.139667ms
+2026/03/09 20:40:35 [GET]	/api/v1/auth/me	127.0.0.1:56780	200	1.076584ms
+2026/03/09 20:40:35 [GET]	/static/uploads/xump/IMG_0043.png	127.0.0.1:56784	200	824.604µs
+2026/03/09 20:40:44 [GET]	/api/v1/auth/validate	127.0.0.1:56792	401	38.93µs
+2026/03/09 20:40:44 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fxump.cn%2Fmark%2F&client_id=mark-live	127.0.0.1:56794	200	64.586µs
+2026/03/09 20:40:44 [GET]	/api/v1/auth/validate	127.0.0.1:56800	401	34.271µs
+2026/03/10 10:22:35 [POST]	/api/v1/auth/logout	127.0.0.1:38184	200	35.696µs
+2026/03/10 10:22:35 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fwww.xump.cn%2Fmark%2Fprofile&client_id=mark-live	127.0.0.1:38186	200	58.345µs
+2026/03/10 10:22:35 [GET]	/api/v1/auth/validate	127.0.0.1:38198	401	41.839µs
+[mysql] 2026/03/10 10:22:48 connection.go:49: closing bad idle connection: unexpected read from socket
+redirect_url https://www.xump.cn/mark/profile?code=67c48e9d74b02af38c7df3cced00f6406c203a736e80b88f
+2026/03/10 10:22:48 [POST]	/api/v1/auth/login	127.0.0.1:38202	200	72.205226ms
+2026/03/10 10:22:48 [GET]	/api/v1/auth/validate	127.0.0.1:38208	401	33.653µs
+2026/03/10 10:22:49 [POST]	/api/v1/auth/token-by-code	127.0.0.1:38216	200	1.220765ms
+2026/03/10 10:22:49 [GET]	/api/v1/auth/validate	127.0.0.1:38218	200	1.044171ms
+2026/03/10 10:22:49 [GET]	/api/v1/auth/me	127.0.0.1:38220	200	1.156563ms
+2026/03/10 10:22:50 [GET]	/static/uploads/xump/IMG_0043.png	127.0.0.1:38226	200	912.028µs
+2026/03/10 10:23:02 [GET]	/api/v1/auth/validate	127.0.0.1:38236	200	1.058454ms
+2026/03/10 10:23:02 [GET]	/api/v1/auth/me	127.0.0.1:38238	200	1.160697ms
+2026/03/10 10:23:13 [GET]	/api/v1/auth/validate	127.0.0.1:38248	200	1.011294ms
+2026/03/10 10:23:13 [GET]	/api/v1/auth/me	127.0.0.1:38250	200	1.183056ms
+2026/03/10 10:23:14 [GET]	/static/uploads/xump/IMG_0043.png	127.0.0.1:38254	200	546.171µs
+2026/03/10 10:46:07 [GET]	/api/v1/auth/validate	127.0.0.1:38510	200	2.408857ms
+2026/03/10 10:46:07 [GET]	/api/v1/auth/me	127.0.0.1:38512	200	1.285637ms
+2026/03/10 10:46:41 [POST]	/api/v1/auth/logout	127.0.0.1:38530	200	76.648µs
+2026/03/10 10:46:41 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fwww.xump.cn%2Fmark%2Fprofile&client_id=mark-live	127.0.0.1:38532	200	63.028µs
+2026/03/10 10:46:41 [GET]	/api/v1/auth/validate	127.0.0.1:38538	401	33.739µs
+redirect_url https://www.xump.cn/mark/profile?code=588c57ff9e75fbdade57f4f5935fc6f458933ec82f60e482
+2026/03/10 10:46:48 [POST]	/api/v1/auth/login	127.0.0.1:38544	200	70.777972ms
+2026/03/10 10:46:48 [GET]	/api/v1/auth/validate	127.0.0.1:38546	401	50.22µs
+2026/03/10 10:46:48 [POST]	/api/v1/auth/token-by-code	127.0.0.1:38550	200	1.153344ms
+2026/03/10 10:46:48 [GET]	/api/v1/auth/validate	127.0.0.1:38552	200	1.214563ms
+2026/03/10 10:46:48 [GET]	/api/v1/auth/me	127.0.0.1:38554	200	1.107092ms
+2026/03/10 10:47:06 [POST]	/api/v1/auth/logout	127.0.0.1:38562	200	59.493µs
+2026/03/10 10:47:06 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fwww.xump.cn%2Fmark%2Fprofile&client_id=mark-live	127.0.0.1:38564	200	51.131µs
+2026/03/10 10:47:06 [GET]	/api/v1/auth/validate	127.0.0.1:38570	401	34.122µs
+redirect_url https://www.xump.cn/mark/profile?code=78e37ecd0fe865590849cda92399baa0007be73b1b298136
+2026/03/10 10:48:13 [POST]	/api/v1/auth/login	127.0.0.1:38582	200	73.677918ms
+2026/03/10 10:48:13 [GET]	/api/v1/auth/validate	127.0.0.1:38584	401	40.293µs
+2026/03/10 10:48:13 [POST]	/api/v1/auth/token-by-code	127.0.0.1:38592	200	1.077111ms
+2026/03/10 10:48:13 [GET]	/api/v1/auth/validate	127.0.0.1:38594	200	1.074535ms
+2026/03/10 10:48:13 [GET]	/api/v1/auth/me	127.0.0.1:38596	200	1.138238ms
+2026/03/10 11:04:37 [GET]	/api/v1/auth/validate	127.0.0.1:38800	200	1.23382ms
+2026/03/10 11:04:37 [GET]	/api/v1/auth/me	127.0.0.1:38802	200	1.187353ms
+2026/03/10 11:05:16 [GET]	/static/uploads/xump/IMG_0043.png	127.0.0.1:38814	200	828.296µs
+2026/03/10 11:24:21 [GET]	/api/v1/auth/validate	127.0.0.1:39040	200	13.550948ms
+2026/03/10 11:24:21 [GET]	/api/v1/auth/me	127.0.0.1:39042	200	1.381133ms
+2026/03/10 12:47:20 [GET]	/api/v1/auth/validate	127.0.0.1:39984	401	83.142µs
+2026/03/10 12:47:20 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fxump.cn%2Fmark%2F&client_id=mark-live	127.0.0.1:39988	200	94.587µs
+2026/03/10 12:47:21 [GET]	/api/v1/auth/validate	127.0.0.1:40004	401	39.944µs
+redirect_url https://xump.cn/mark/?code=2cfbadb2476381d7166a79f66b193df036c3fe11de321b95
+2026/03/10 12:47:26 [POST]	/api/v1/auth/login	127.0.0.1:40006	200	70.602247ms
+2026/03/10 12:47:26 [GET]	/api/v1/auth/validate	127.0.0.1:40008	401	44.213µs
+2026/03/10 12:47:31 [POST]	/api/v1/auth/token-by-code	127.0.0.1:40018	200	19.692164ms
+2026/03/10 12:47:31 [GET]	/api/v1/auth/validate	127.0.0.1:40020	200	1.151439ms
+2026/03/10 12:47:32 [GET]	/api/v1/auth/me	127.0.0.1:40022	200	1.162548ms
+2026/03/10 13:56:40 [GET]	/api/v1/auth/validate	127.0.0.1:40806	200	1.155418ms
+2026/03/10 13:56:40 [GET]	/api/v1/auth/me	127.0.0.1:40808	200	1.109533ms
+2026/03/10 14:14:43 [GET]	/api/v1/auth/validate	127.0.0.1:41026	401	29.839µs
+2026/03/10 14:14:43 [GET]	/api/v1/auth/request-login?redirect_uri=https%3A%2F%2Fxump.cn%2Fmark%2F&client_id=mark-live	127.0.0.1:41028	200	123.8µs
+2026/03/10 14:14:43 [GET]	/api/v1/auth/validate	127.0.0.1:41040	401	47.856µs
+redirect_url https://xump.cn/mark/?code=59b73f736d1beb41a0f0f805956b122350250d00fa977e83
+2026/03/10 14:14:47 [POST]	/api/v1/auth/login	127.0.0.1:41044	200	70.631519ms
+2026/03/10 14:14:47 [GET]	/api/v1/auth/validate	127.0.0.1:41046	401	49.465µs
+2026/03/10 14:14:47 [POST]	/api/v1/auth/token-by-code	127.0.0.1:41054	200	1.30152ms
+2026/03/10 14:14:47 [GET]	/api/v1/auth/validate	127.0.0.1:41056	200	2.9332ms
+2026/03/10 14:14:47 [GET]	/api/v1/auth/me	127.0.0.1:41058	200	1.031586ms
+2026/03/10 14:15:25 [POST]	/api/v1/auth/upload	127.0.0.1:41072	200	40.267249ms
+2026/03/10 14:15:25 [GET]	/static/uploads/xump/IMG_0047.jpeg	127.0.0.1:41076	200	5.408458ms
+2026/03/10 14:23:38 [GET]	/api/v1/auth/validate	127.0.0.1:41178	200	1.141622ms
+2026/03/10 14:23:38 [GET]	/api/v1/auth/me	127.0.0.1:41180	200	1.142949ms
+2026/03/10 14:23:38 [GET]	/static/uploads/xump/IMG_0047.jpeg	127.0.0.1:41184	200	5.309434ms
