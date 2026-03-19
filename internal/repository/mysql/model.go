@@ -29,3 +29,16 @@ type UserGORM struct {
 func (UserGORM) TableName() string {
 	return "users"
 }
+
+// RefreshTokenGORM 映射 refresh_tokens 表
+type RefreshTokenGORM struct {
+	ID        int64     `gorm:"primaryKey;autoIncrement"`
+	UserID    int64     `gorm:"not null;index"`
+	Token     string    `gorm:"type:varchar(128);not null;uniqueIndex"`
+	ExpiresAt time.Time `gorm:"not null;index"`
+	CreatedAt time.Time
+}
+
+func (RefreshTokenGORM) TableName() string {
+	return "refresh_tokens"
+}

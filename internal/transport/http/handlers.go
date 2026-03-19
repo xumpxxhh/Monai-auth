@@ -35,25 +35,27 @@ type Client struct {
 
 // Handler 结构体包含对业务服务的依赖
 type Handler struct {
-	AuthService          auth.Service
-	StateStore           auth.StateStore
-	CodeStore            auth.CodeStore
-	LoginPagePath        string
-	AuthBaseURL          string // 认证中心对外 base URL，用于拼完整登录页地址
-	AllowedRedirectURIs  []string
-	Clients              []Client
-	AccessTokenExpireSec int
+	AuthService           auth.Service
+	StateStore            auth.StateStore
+	CodeStore             auth.CodeStore
+	LoginPagePath         string
+	AuthBaseURL           string // 认证中心对外 base URL，用于拼完整登录页地址
+	AllowedRedirectURIs   []string
+	Clients               []Client
+	AccessTokenExpireSec  int
+	RefreshTokenExpireSec int
 }
 
 // HandlerOpts 可选配置
 type HandlerOpts struct {
-	StateStore           auth.StateStore
-	CodeStore            auth.CodeStore
-	LoginPagePath        string
-	AuthBaseURL          string
-	AllowedRedirectURIs  []string
-	Clients              []Client
-	AccessTokenExpireSec int
+	StateStore            auth.StateStore
+	CodeStore             auth.CodeStore
+	LoginPagePath         string
+	AuthBaseURL           string
+	AllowedRedirectURIs   []string
+	Clients               []Client
+	AccessTokenExpireSec  int
+	RefreshTokenExpireSec int
 }
 
 // UserInfoResponse 验证接口返回的用户信息
@@ -78,6 +80,7 @@ type ErrorResponse struct {
 }
 
 func NewHandler(authService auth.Service, opts *HandlerOpts) *Handler {
+	// TODO
 	h := &Handler{AuthService: authService}
 	if opts != nil {
 		h.StateStore = opts.StateStore
@@ -85,18 +88,23 @@ func NewHandler(authService auth.Service, opts *HandlerOpts) *Handler {
 		if opts.LoginPagePath != "" {
 			h.LoginPagePath = opts.LoginPagePath
 		} else {
-			h.LoginPagePath = "/monai/login"
+			h.LoginPagePath = "/auth"
 		}
 		h.AuthBaseURL = opts.AuthBaseURL
 		h.AllowedRedirectURIs = opts.AllowedRedirectURIs
 		h.Clients = opts.Clients
 		h.AccessTokenExpireSec = opts.AccessTokenExpireSec
 		if h.AccessTokenExpireSec <= 0 {
-			h.AccessTokenExpireSec = 86400 // 24h
+			h.AccessTokenExpireSec = 2 * 3600 // 2小时
+		}
+		h.RefreshTokenExpireSec = opts.RefreshTokenExpireSec
+		if h.RefreshTokenExpireSec <= 0 {
+			h.RefreshTokenExpireSec = 7 * 24 * 3600 // 7天
 		}
 	} else {
-		h.LoginPagePath = "/monai/login"
-		h.AccessTokenExpireSec = 86400
+		h.LoginPagePath = "/auth"
+		h.AccessTokenExpireSec = 2 * 3600
+		h.RefreshTokenExpireSec = 7 * 24 * 3600
 	}
 	return h
 }
@@ -155,21 +163,43 @@ func (h *Handler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// 非 SSO：将 token 写入 HttpOnly Cookie 并返回 JSON
+	// 非 SSO：将 access_token 写入 HttpOnly Cookie
 	http.SetCookie(w, &http.Cookie{
 		Name:     authTokenCookieName,
 		Value:    token,
 		Path:     "/",
+		MaxAge:   h.AccessTokenExpireSec,
 		HttpOnly: true,
 		Secure:   true,
 		SameSite: http.SameSiteLaxMode,
 	})
+	// 从 access_token 中取 userID，签发 refresh token
+	if user, verr := h.AuthService.Validate(r.Context(), token); verr == nil {
+		refreshExpiry := time.Duration(h.RefreshTokenExpireSec) * time.Second
+		if rt, rterr := h.AuthService.IssueRefreshToken(r.Context(), user.ID, refreshExpiry); rterr == nil {
+			http.SetCookie(w, &http.Cookie{
+				Name:     refreshTokenCookieName,
+				Value:    rt,
+				Path:     refreshTokenCookiePath,
+				MaxAge:   h.RefreshTokenExpireSec,
+				HttpOnly: true,
+				Secure:   true,
+				SameSite: http.SameSiteLaxMode,
+			})
+		}
+	}
 	w.Header().Set("Content-Type", "application/json")
 	_ = json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
 }
 
 // authTokenCookieName 与登录时设置的 Cookie 名称一致
 const authTokenCookieName = "auth_token"
+
+// refreshTokenCookieName refresh token Cookie 名
+const refreshTokenCookieName = "refresh_token"
+
+// refreshTokenCookiePath 限制 refresh token Cookie 只在刷新接口携带，缩小暴露面
+const refreshTokenCookiePath = "/api/v1/auth/refresh"
 
 // RequestLoginResponse 请求登录接口返回的登录页地址
 type RequestLoginResponse struct {
@@ -206,14 +236,28 @@ func (h *Handler) SSORequestLoginHandler(w http.ResponseWriter, r *http.Request)
 	_ = json.NewEncoder(w).Encode(RequestLoginResponse{LoginURL: loginURL})
 }
 
-// LogoutHandler 处理登出：清除服务端下发的 auth_token Cookie，客户端无需再持有 token
+// LogoutHandler 处理登出：吊销 refresh token，清除两个 Cookie
 func (h *Handler) LogoutHandler(w http.ResponseWriter, r *http.Request) {
+	// 吊销 refresh token（从数据库删除）
+	if c, err := r.Cookie(refreshTokenCookieName); err == nil && c.Value != "" {
+		_ = h.AuthService.RevokeRefreshToken(r.Context(), c.Value)
+	}
 	http.SetCookie(w, &http.Cookie{
 		Name:     authTokenCookieName,
 		Value:    "",
 		Path:     "/",
 		MaxAge:   -1,
 		HttpOnly: true,
+		Secure:   true,
+		SameSite: http.SameSiteLaxMode,
+	})
+	http.SetCookie(w, &http.Cookie{
+		Name:     refreshTokenCookieName,
+		Value:    "",
+		Path:     refreshTokenCookiePath,
+		MaxAge:   -1,
+		HttpOnly: true,
+		Secure:   true,
 		SameSite: http.SameSiteLaxMode,
 	})
 	w.Header().Set("Content-Type", "application/json")
@@ -488,11 +532,61 @@ func (h *Handler) TokenByCodeHandler(w http.ResponseWriter, r *http.Request) {
 		Name:     authTokenCookieName,
 		Value:    accessToken,
 		Path:     "/",
+		MaxAge:   h.AccessTokenExpireSec,
 		HttpOnly: true,
+		Secure:   true,
 		SameSite: http.SameSiteLaxMode,
 	})
+	refreshExpiry := time.Duration(h.RefreshTokenExpireSec) * time.Second
+	if rt, rterr := h.AuthService.IssueRefreshToken(r.Context(), userID, refreshExpiry); rterr == nil {
+		http.SetCookie(w, &http.Cookie{
+			Name:     refreshTokenCookieName,
+			Value:    rt,
+			Path:     refreshTokenCookiePath,
+			MaxAge:   h.RefreshTokenExpireSec,
+			HttpOnly: true,
+			Secure:   true,
+			SameSite: http.SameSiteLaxMode,
+		})
+	}
 	w.Header().Set("Content-Type", "application/json")
 	_ = json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
+}
+
+// RefreshHandler 用 refresh_token Cookie 换取新的 access_token 和 refresh_token（Token 轮换）
+// POST /api/v1/auth/refresh
+func (h *Handler) RefreshHandler(w http.ResponseWriter, r *http.Request) {
+	c, err := r.Cookie(refreshTokenCookieName)
+	if err != nil || c.Value == "" {
+		writeError(w, "UNAUTHORIZED", "Missing refresh token", http.StatusUnauthorized, "")
+		return
+	}
+	refreshExpiry := time.Duration(h.RefreshTokenExpireSec) * time.Second
+	newAccessToken, newRefreshToken, err := h.AuthService.RefreshAccessToken(r.Context(), c.Value, refreshExpiry)
+	if err != nil {
+		writeError(w, "INVALID_TOKEN", "Invalid or expired refresh token", http.StatusUnauthorized,
+			"refresh failed: "+err.Error())
+		return
+	}
+	http.SetCookie(w, &http.Cookie{
+		Name:     authTokenCookieName,
+		Value:    newAccessToken,
+		Path:     "/",
+		MaxAge:   h.AccessTokenExpireSec,
+		HttpOnly: true,
+		Secure:   true,
+		SameSite: http.SameSiteLaxMode,
+	})
+	http.SetCookie(w, &http.Cookie{
+		Name:     refreshTokenCookieName,
+		Value:    newRefreshToken,
+		Path:     refreshTokenCookiePath,
+		MaxAge:   h.RefreshTokenExpireSec,
+		HttpOnly: true,
+		Secure:   true,
+		SameSite: http.SameSiteLaxMode,
+	})
+	w.WriteHeader(http.StatusNoContent)
 }
 
 // RegisterHandler 处理注册请求

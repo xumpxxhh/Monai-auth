@@ -2,7 +2,8 @@
 server:
   port: 8888
   jwt_secret: "your_very_secret_key_for_jwt_signing"
-  jwt_expiration_hours: 24
+  jwt_expiration_hours: 2
+  refresh_token_expiry_days: 7
   # 允许跨域访问的前端域名列表
   allowed_origins:
     - "http://localhost:5173"

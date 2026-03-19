@@ -2,8 +2,11 @@ package auth
 
 import (
 	"context"
+	"crypto/rand"
+	"encoding/hex"
 	"errors"
 	"fmt"
+	"time"
 
 	"golang.org/x/crypto/bcrypt"
 
@@ -17,18 +20,29 @@ type Service interface {
 	Validate(ctx context.Context, tokenString string) (*domain.User, error)
 	// IssueToken 为指定用户签发 access_token（用于授权码换 token）
 	IssueToken(ctx context.Context, userID int64) (string, error)
+	// IssueRefreshToken 签发 refresh token 并持久化，返回 token 字符串
+	IssueRefreshToken(ctx context.Context, userID int64, expiry time.Duration) (string, error)
+	// RefreshAccessToken 用 refresh token 换发新的 access_token；
+	// 同时轮换 refresh token（旧的删除，返回新的 refresh token 字符串）
+	RefreshAccessToken(ctx context.Context, refreshToken string, refreshExpiry time.Duration) (accessToken string, newRefreshToken string, err error)
+	// RevokeRefreshToken 吊销单个 refresh token（登出时调用）
+	RevokeRefreshToken(ctx context.Context, refreshToken string) error
+	// RevokeAllRefreshTokens 吊销某用户所有 refresh token（强制下线时调用）
+	RevokeAllRefreshTokens(ctx context.Context, userID int64) error
 }
 
 type authService struct {
-	repo         domain.UserRepository
-	tokenService TokenService
+	repo            domain.UserRepository
+	tokenService    TokenService
+	refreshTokenRepo domain.RefreshTokenRepository
 }
 
 // NewAuthService 创建鉴权服务实例
-func NewAuthService(repo domain.UserRepository, tokenService TokenService) Service {
+func NewAuthService(repo domain.UserRepository, tokenService TokenService, refreshTokenRepo domain.RefreshTokenRepository) Service {
 	return &authService{
-		repo:         repo,
-		tokenService: tokenService,
+		repo:            repo,
+		tokenService:    tokenService,
+		refreshTokenRepo: refreshTokenRepo,
 	}
 }
 
@@ -115,4 +129,62 @@ func (s *authService) IssueToken(ctx context.Context, userID int64) (string, err
 		return "", err
 	}
 	return s.tokenService.GenerateToken(user.ID, user.Role)
+}
+
+// generateRefreshTokenString 生成 32 字节随机 hex 字符串
+func generateRefreshTokenString() (string, error) {
+	b := make([]byte, 32)
+	if _, err := rand.Read(b); err != nil {
+		return "", fmt.Errorf("failed to generate refresh token: %w", err)
+	}
+	return hex.EncodeToString(b), nil
+}
+
+func (s *authService) IssueRefreshToken(ctx context.Context, userID int64, expiry time.Duration) (string, error) {
+	tokenStr, err := generateRefreshTokenString()
+	if err != nil {
+		return "", err
+	}
+	rt := &domain.RefreshToken{
+		UserID:    userID,
+		Token:     tokenStr,
+		ExpiresAt: time.Now().Add(expiry),
+	}
+	if err := s.refreshTokenRepo.Save(ctx, rt); err != nil {
+		return "", fmt.Errorf("failed to save refresh token: %w", err)
+	}
+	return tokenStr, nil
+}
+
+func (s *authService) RefreshAccessToken(ctx context.Context, refreshToken string, refreshExpiry time.Duration) (string, string, error) {
+	rt, err := s.refreshTokenRepo.FindByToken(ctx, refreshToken)
+	if err != nil {
+		return "", "", errors.New("invalid or expired refresh token")
+	}
+	user, err := s.repo.FindByID(ctx, rt.UserID)
+	if err != nil {
+		return "", "", domain.ErrUserNotFound
+	}
+	// 签发新 access_token
+	accessToken, err := s.tokenService.GenerateToken(user.ID, user.Role)
+	if err != nil {
+		return "", "", fmt.Errorf("failed to generate access token: %w", err)
+	}
+	// 轮换 refresh token：删除旧的，生成新的
+	if err := s.refreshTokenRepo.DeleteByToken(ctx, refreshToken); err != nil {
+		return "", "", fmt.Errorf("failed to revoke old refresh token: %w", err)
+	}
+	newRefreshToken, err := s.IssueRefreshToken(ctx, user.ID, refreshExpiry)
+	if err != nil {
+		return "", "", err
+	}
+	return accessToken, newRefreshToken, nil
+}
+
+func (s *authService) RevokeRefreshToken(ctx context.Context, refreshToken string) error {
+	return s.refreshTokenRepo.DeleteByToken(ctx, refreshToken)
+}
+
+func (s *authService) RevokeAllRefreshTokens(ctx context.Context, userID int64) error {
+	return s.refreshTokenRepo.DeleteByUserID(ctx, userID)
 }
