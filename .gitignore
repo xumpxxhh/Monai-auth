@@ -6,5 +6,13 @@
 /auth-server
 auth-server-linux-amd64
 
+Linux 可执行文件（无扩展名的编译产物）
+/monaiauth
+/monaiauth_old
+*-linux-amd64
+*-linux-arm64
+/main
+
+
 # 用户上传目录
 uploads/
