@@ -51,21 +51,25 @@ func (w *cacheControlResponseWriter) Write(p []byte) (int, error) {
 // registerRoutes 注册所有 HTTP 路由
 func registerRoutes(r *chi.Mux, h *httptransport.Handler, allowedOrigins []string) {
 	r.Use(httptransport.LoggerMiddleware)
-	r.Use(httptransport.RateLimitMiddleware(10, time.Minute))
 	if len(allowedOrigins) > 0 {
 		r.Use(httptransport.CORSMiddleware(allowedOrigins))
 	}
 
-	r.Get("/api/v1/auth/request-login", h.SSORequestLoginHandler)
-	r.Post("/api/v1/auth/login", h.LoginHandler)
-	r.Post("/api/v1/auth/logout", h.LogoutHandler)
-	r.Get("/api/v1/auth/validate", h.ValidateHandler)
-	r.Get("/api/v1/auth/me", h.MeHandler)
-	r.Post("/api/v1/auth/upload", h.UploadHandler)
-	r.Post("/api/v1/auth/token", h.TokenHandler)
-	r.Post("/api/v1/auth/token-by-code", h.TokenByCodeHandler)
-	r.Post("/api/v1/auth/refresh", h.RefreshHandler)
-	r.Post("/api/v1/auth/register", h.RegisterHandler)
+	// 敏感接口：10次/15分钟，防爆破与授权码滥用
+	sensitive := httptransport.RateLimitMiddleware(10, 15*time.Minute)
+	r.With(sensitive).Get("/api/v1/auth/request-login", h.SSORequestLoginHandler)
+	r.With(sensitive).Post("/api/v1/auth/login", h.LoginHandler)
+	r.With(sensitive).Post("/api/v1/auth/register", h.RegisterHandler)
+	r.With(sensitive).Post("/api/v1/auth/token", h.TokenHandler)
+	r.With(sensitive).Post("/api/v1/auth/token-by-code", h.TokenByCodeHandler)
+
+	// 普通接口：120次/分钟，满足正常业务轮询
+	normal := httptransport.RateLimitMiddleware(120, time.Minute)
+	r.With(normal).Post("/api/v1/auth/logout", h.LogoutHandler)
+	r.With(normal).Get("/api/v1/auth/validate", h.ValidateHandler)
+	r.With(normal).Get("/api/v1/auth/me", h.MeHandler)
+	r.With(normal).Post("/api/v1/auth/upload", h.UploadHandler)
+	r.With(normal).Post("/api/v1/auth/refresh", h.RefreshHandler)
 
 	const staticCacheMaxAge = 3 * 24 * 3600 // 3 天
 	staticHandler := http.StripPrefix("/static/uploads", cacheControlHandler(http.FileServer(http.Dir("./uploads")), staticCacheMaxAge))
