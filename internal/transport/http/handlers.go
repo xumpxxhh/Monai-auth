@@ -2,6 +2,9 @@ package http
 
 import (
 	"context"
+	"crypto/sha256"
+	"crypto/subtle"
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -165,11 +168,11 @@ func (h *Handler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 // buildSSOredirectURI 从 StateStore 取回 client_id/redirect_uri，生成授权码，
 // 返回带 code 的完整回调 URL；任意步骤失败时返回空字符串。
 func (h *Handler) buildSSOredirectURI(ctx context.Context, userID int64, serverState string) string {
-	clientID, redirectURI, _, ok := h.StateStore.GetAndConsume(serverState)
+	clientID, redirectURI, _, codeChallenge, codeChallengeMethod, ok := h.StateStore.GetAndConsume(serverState)
 	if !ok || redirectURI == "" {
 		return ""
 	}
-	code, err := h.CodeStore.Save(userID, clientID, redirectURI)
+	code, err := h.CodeStore.Save(userID, clientID, redirectURI, codeChallenge, codeChallengeMethod)
 	if err != nil {
 		return ""
 	}
@@ -291,8 +294,25 @@ func (h *Handler) SSORequestLoginHandler(w http.ResponseWriter, r *http.Request)
 			fmt.Sprintf("SSO redirect_uri not in allowlist: client=%s uri=%s", clientID, redirectURI))
 		return
 	}
-	// state 由服务端生成并绑定 client_id、redirect_uri
-	state, err := h.StateStore.Save(clientID, redirectURI, "")
+	codeChallenge := strings.TrimSpace(r.URL.Query().Get("code_challenge"))
+	codeChallengeMethod := strings.TrimSpace(r.URL.Query().Get("code_challenge_method"))
+	if codeChallengeMethod == "" {
+		codeChallengeMethod = "S256"
+	}
+	if codeChallenge == "" {
+		writeError(w, "INVALID_REQUEST", "code_challenge is required", http.StatusBadRequest, "")
+		return
+	}
+	if codeChallengeMethod != "S256" {
+		writeError(w, "INVALID_REQUEST", "code_challenge_method must be S256", http.StatusBadRequest, "")
+		return
+	}
+	if !isValidCodeChallenge(codeChallenge) {
+		writeError(w, "INVALID_REQUEST", "invalid code_challenge format", http.StatusBadRequest, "")
+		return
+	}
+	// state 由服务端生成并绑定 client_id、redirect_uri、PKCE challenge
+	state, err := h.StateStore.Save(clientID, redirectURI, "", codeChallenge, codeChallengeMethod)
 	if err != nil {
 		writeError(w, "INTERNAL_ERROR", "Failed to create state", http.StatusInternalServerError, "")
 		return
@@ -525,7 +545,7 @@ func (h *Handler) TokenHandler(w http.ResponseWriter, r *http.Request) {
 		writeError(w, "INVALID_CLIENT", "invalid client_id or client_secret", http.StatusUnauthorized, "")
 		return
 	}
-	userID, codeClientID, codeRedirectURI, ok := h.CodeStore.GetAndConsume(code)
+	userID, codeClientID, codeRedirectURI, _, _, ok := h.CodeStore.GetAndConsume(code)
 	if !ok {
 		writeError(w, "INVALID_GRANT", "invalid or expired code", http.StatusBadRequest, "")
 		return
@@ -558,9 +578,10 @@ func (h *Handler) TokenHandler(w http.ResponseWriter, r *http.Request) {
 
 // TokenByCodeRequest 前端用 code 换 token 的请求（无子应用后端时使用）
 type TokenByCodeRequest struct {
-	ClientID    string `json:"client_id"`
-	Code        string `json:"code"`
-	RedirectURI string `json:"redirect_uri"`
+	ClientID     string `json:"client_id"`
+	Code         string `json:"code"`
+	RedirectURI  string `json:"redirect_uri"`
+	CodeVerifier string `json:"code_verifier"`
 }
 
 // TokenByCodeHandler 前端直连：用 client_id + 登录成功后返回的凭证（redirect_url 中的 code）换取 token，无需 client_secret。
@@ -579,11 +600,12 @@ func (h *Handler) TokenByCodeHandler(w http.ResponseWriter, r *http.Request) {
 	clientID := strings.TrimSpace(req.ClientID)
 	code := strings.TrimSpace(req.Code)
 	redirectURI := strings.TrimSpace(req.RedirectURI)
-	if clientID == "" || code == "" || redirectURI == "" {
-		writeError(w, "INVALID_REQUEST", "client_id, code and redirect_uri are required", http.StatusBadRequest, "")
+	codeVerifier := strings.TrimSpace(req.CodeVerifier)
+	if clientID == "" || code == "" || redirectURI == "" || codeVerifier == "" {
+		writeError(w, "INVALID_REQUEST", "client_id, code, redirect_uri and code_verifier are required", http.StatusBadRequest, "")
 		return
 	}
-	userID, codeClientID, codeRedirectURI, ok := h.CodeStore.GetAndConsume(code)
+	userID, codeClientID, codeRedirectURI, codeChallenge, codeChallengeMethod, ok := h.CodeStore.GetAndConsume(code)
 	if !ok {
 		writeError(w, "INVALID_GRANT", "invalid or expired code", http.StatusBadRequest, "")
 		return
@@ -595,6 +617,11 @@ func (h *Handler) TokenByCodeHandler(w http.ResponseWriter, r *http.Request) {
 	if codeRedirectURI != redirectURI {
 		writeError(w, "INVALID_GRANT", "redirect_uri does not match", http.StatusBadRequest,
 			fmt.Sprintf("token-by-code redirect_uri mismatch: client=%s got=%s want=%s", clientID, redirectURI, codeRedirectURI))
+		return
+	}
+	if !verifyPKCEChallenge(codeVerifier, codeChallenge, codeChallengeMethod) {
+		writeError(w, "INVALID_GRANT", "code_verifier does not match code_challenge", http.StatusBadRequest,
+			fmt.Sprintf("PKCE verification failed: client=%s", clientID))
 		return
 	}
 	accessToken, err := h.AuthService.IssueToken(r.Context(), userID)
@@ -654,4 +681,24 @@ func (h *Handler) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	w.WriteHeader(http.StatusCreated)
+}
+
+// verifyPKCEChallenge 验证 code_verifier 与存储的 code_challenge 是否匹配（仅支持 S256）。
+// 使用 subtle.ConstantTimeCompare 避免时序攻击。
+func verifyPKCEChallenge(codeVerifier, codeChallenge, method string) bool {
+	if method != "S256" || codeVerifier == "" || codeChallenge == "" {
+		return false
+	}
+	h := sha256.Sum256([]byte(codeVerifier))
+	computed := base64.RawURLEncoding.EncodeToString(h[:])
+	return subtle.ConstantTimeCompare([]byte(computed), []byte(codeChallenge)) == 1
+}
+
+// isValidCodeChallenge 校验 code_challenge 是否符合 S256 base64url 格式（固定 43 字符）。
+func isValidCodeChallenge(s string) bool {
+	if len(s) != 43 {
+		return false
+	}
+	_, err := base64.RawURLEncoding.DecodeString(s)
+	return err == nil
 }

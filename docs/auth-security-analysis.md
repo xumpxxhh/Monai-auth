@@ -306,24 +306,24 @@ func hashToken(token string) string {
 
 ## 四、综合评分
 
-| 维度 | 状态 | 说明 |
-|------|------|------|
-| 整体架构分层 | ✅ 合理 | 职责清晰，接口抽象到位 |
-| Cookie 安全属性 | ✅ 完整 | HttpOnly / Secure / SameSite=Lax 齐备 |
-| 密码存储 | ✅ 安全 | bcrypt DefaultCost |
-| Token 轮换 | ✅ 正确 | 旧 Token 物理删除 |
-| 授权码一次性 | ✅ 正确 | GetAndConsume 取出即删 |
-| 静态文件服务 | 🔴 严重漏洞 | 暴露整个工作目录，包括配置文件 |
-| redirect_uri 校验 | 🔴 严重漏洞 | Open Redirect，SSO 授权码可被劫持 |
-| 敏感配置管理 | 🔴 高风险 | 明文密钥可能随代码库泄露 |
-| 速率限制 | 🟠 缺失 | 暴力破解无防御 |
-| client_secret 比较 | 🟠 时序漏洞 | 应使用常量时间比较 |
-| 公共客户端安全 | 🟠 缺失 | token-by-code 无 PKCE |
-| 角色持久化 | 🟡 不可用 | Role 字段未入库 |
-| 水平扩展能力 | 🟡 受限 | 内存 Store 限制单节点 |
-| Refresh Token 存储 | 🟡 可改进 | 明文存库，建议哈希后存储 |
-| JWT 标准声明 | 🟡 不完整 | 缺少 iss / aud / jti |
-| Access Token 撤销 | 🟡 不支持 | 登出后仍有效，需 jti 黑名单 |
+| 维度               | 状态        | 说明                                  |
+| ------------------ | ----------- | ------------------------------------- |
+| 整体架构分层       | ✅ 合理     | 职责清晰，接口抽象到位                |
+| Cookie 安全属性    | ✅ 完整     | HttpOnly / Secure / SameSite=Lax 齐备 |
+| 密码存储           | ✅ 安全     | bcrypt DefaultCost                    |
+| Token 轮换         | ✅ 正确     | 旧 Token 物理删除                     |
+| 授权码一次性       | ✅ 正确     | GetAndConsume 取出即删                |
+| 静态文件服务       | 🔴 严重漏洞 | 暴露整个工作目录，包括配置文件        |
+| redirect_uri 校验  | 🔴 严重漏洞 | Open Redirect，SSO 授权码可被劫持     |
+| 敏感配置管理       | 🔴 高风险   | 明文密钥可能随代码库泄露              |
+| 速率限制           | 🟠 缺失     | 暴力破解无防御                        |
+| client_secret 比较 | 🟠 时序漏洞 | 应使用常量时间比较                    |
+| 公共客户端安全     | 🟠 缺失     | token-by-code 无 PKCE                 |
+| 角色持久化         | 🟡 不可用   | Role 字段未入库                       |
+| 水平扩展能力       | 🟡 受限     | 内存 Store 限制单节点                 |
+| Refresh Token 存储 | 🟡 可改进   | 明文存库，建议哈希后存储              |
+| JWT 标准声明       | 🟡 不完整   | 缺少 iss / aud / jti                  |
+| Access Token 撤销  | 🟡 不支持   | 登出后仍有效，需 jti 黑名单           |
 
 ---
 
