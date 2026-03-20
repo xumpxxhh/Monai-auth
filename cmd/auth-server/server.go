@@ -66,6 +66,6 @@ func registerRoutes(r *chi.Mux, h *httptransport.Handler, allowedOrigins []strin
 	r.Post("/api/v1/auth/register", h.RegisterHandler)
 
 	const staticCacheMaxAge = 3 * 24 * 3600 // 3 天
-	staticHandler := http.StripPrefix("/static", cacheControlHandler(http.FileServer(http.Dir(".")), staticCacheMaxAge))
-	r.Handle("/static/*", staticCORSHandler(staticHandler))
+	staticHandler := http.StripPrefix("/static/uploads", cacheControlHandler(http.FileServer(http.Dir("./uploads")), staticCacheMaxAge))
+	r.Handle("/static/uploads/*", staticCORSHandler(staticHandler))
 }
