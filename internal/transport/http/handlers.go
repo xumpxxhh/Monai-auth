@@ -1,6 +1,7 @@
 package http
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -139,57 +140,119 @@ func (h *Handler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// SSO 授权码流程：带 server_state 时用其取回 client_id/redirect_uri，生成 code 并返回完整回调 URL 字符串（不 302）
+	// 解析 token 获取用户信息，两个分支均需要 userID
+	user, err := h.AuthService.Validate(r.Context(), token)
+	if err != nil {
+		writeError(w, "INTERNAL_ERROR", "Server error", http.StatusInternalServerError, "")
+		return
+	}
+
+	// SSO 授权码流程：带 server_state 时生成授权码并返回子应用回调 URL（不 302，不写 Cookie）
 	if req.ServerState != "" && h.StateStore != nil && h.CodeStore != nil {
-		clientID, redirectURI, _, ok := h.StateStore.GetAndConsume(req.ServerState)
-		if ok && redirectURI != "" {
-			user, errUser := h.AuthService.Validate(r.Context(), token)
-			if errUser == nil {
-				code, errCode := h.CodeStore.Save(user.ID, clientID, redirectURI)
-				if errCode == nil {
-					u, _ := url.Parse(redirectURI)
-					if u != nil {
-						q := u.Query()
-						q.Set("code", code)
-						// q.Set("state", req.ServerState)
-						u.RawQuery = q.Encode()
-						w.Header().Set("Content-Type", "application/json")
-						fmt.Println("redirect_url", u.String())
-						_ = json.NewEncoder(w).Encode(map[string]string{"redirect_url": u.String()})
-						return
-					}
-				}
-			}
+		if redirectURI := h.buildSSOredirectURI(r.Context(), user.ID, req.ServerState); redirectURI != "" {
+			w.Header().Set("Content-Type", "application/json")
+			_ = json.NewEncoder(w).Encode(map[string]string{"redirect_url": redirectURI})
+			return
 		}
 	}
 
-	// 非 SSO：将 access_token 写入 HttpOnly Cookie
+	// 非 SSO：下发双 Cookie 并返回 ok
+	h.setTokenCookies(w, r.Context(), token, user.ID)
+	w.Header().Set("Content-Type", "application/json")
+	_ = json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
+}
+
+// buildSSOredirectURI 从 StateStore 取回 client_id/redirect_uri，生成授权码，
+// 返回带 code 的完整回调 URL；任意步骤失败时返回空字符串。
+func (h *Handler) buildSSOredirectURI(ctx context.Context, userID int64, serverState string) string {
+	clientID, redirectURI, _, ok := h.StateStore.GetAndConsume(serverState)
+	if !ok || redirectURI == "" {
+		return ""
+	}
+	code, err := h.CodeStore.Save(userID, clientID, redirectURI)
+	if err != nil {
+		return ""
+	}
+	u, err := url.Parse(redirectURI)
+	if err != nil || u == nil {
+		return ""
+	}
+	q := u.Query()
+	q.Set("code", code)
+	u.RawQuery = q.Encode()
+	return u.String()
+}
+
+// isRedirectURIAllowed 检查 redirectURI 的 host 是否在指定客户端的 allowed_redirect_uris 白名单内。
+// 仅比较 scheme+host，路径部分不参与校验，防止任意子路径绕过。
+func (h *Handler) isRedirectURIAllowed(clientID, redirectURI string) bool {
+	target, err := url.Parse(redirectURI)
+	if err != nil || target.Host == "" {
+		return false
+	}
+	targetOrigin := target.Scheme + "://" + target.Host
+	for _, c := range h.Clients {
+		if c.ClientID != clientID {
+			continue
+		}
+		for _, allowed := range c.AllowedRedirectURIs {
+			a, err := url.Parse(allowed)
+			if err != nil {
+				continue
+			}
+			if a.Scheme+"://"+a.Host == targetOrigin {
+				return true
+			}
+		}
+		// 找到了对应 client 但无匹配项，无需继续遍历
+		return false
+	}
+	return false
+}
+
+// writeTokenCookies 将已有的 access_token 和 refresh_token 直接写入 Cookie。
+// 用于 token 值已经确定的场景（如 RefreshHandler 轮换后）。
+func (h *Handler) writeTokenCookies(w http.ResponseWriter, accessToken, refreshToken string) {
 	http.SetCookie(w, &http.Cookie{
 		Name:     authTokenCookieName,
-		Value:    token,
+		Value:    accessToken,
 		Path:     "/",
 		MaxAge:   h.AccessTokenExpireSec,
 		HttpOnly: true,
 		Secure:   true,
 		SameSite: http.SameSiteLaxMode,
 	})
-	// 从 access_token 中取 userID，签发 refresh token
-	if user, verr := h.AuthService.Validate(r.Context(), token); verr == nil {
-		refreshExpiry := time.Duration(h.RefreshTokenExpireSec) * time.Second
-		if rt, rterr := h.AuthService.IssueRefreshToken(r.Context(), user.ID, refreshExpiry); rterr == nil {
-			http.SetCookie(w, &http.Cookie{
-				Name:     refreshTokenCookieName,
-				Value:    rt,
-				Path:     refreshTokenCookiePath,
-				MaxAge:   h.RefreshTokenExpireSec,
-				HttpOnly: true,
-				Secure:   true,
-				SameSite: http.SameSiteLaxMode,
-			})
-		}
+	http.SetCookie(w, &http.Cookie{
+		Name:     refreshTokenCookieName,
+		Value:    refreshToken,
+		Path:     refreshTokenCookiePath,
+		MaxAge:   h.RefreshTokenExpireSec,
+		HttpOnly: true,
+		Secure:   true,
+		SameSite: http.SameSiteLaxMode,
+	})
+}
+
+// setTokenCookies 签发 refresh token 后，连同 access_token 一起写入 Cookie。
+// 用于登录、授权码换 token 等需要新建 session 的场景。
+func (h *Handler) setTokenCookies(w http.ResponseWriter, ctx context.Context, accessToken string, userID int64) {
+	refreshExpiry := time.Duration(h.RefreshTokenExpireSec) * time.Second
+	rt, err := h.AuthService.IssueRefreshToken(ctx, userID, refreshExpiry)
+	if err != nil {
+		log.Printf("[AUTH] failed to issue refresh token for user %d: %v", userID, err)
+		// refresh token 签发失败时至少保证 access_token Cookie 写入
+		http.SetCookie(w, &http.Cookie{
+			Name:     authTokenCookieName,
+			Value:    accessToken,
+			Path:     "/",
+			MaxAge:   h.AccessTokenExpireSec,
+			HttpOnly: true,
+			Secure:   true,
+			SameSite: http.SameSiteLaxMode,
+		})
+		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	_ = json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
+	h.writeTokenCookies(w, accessToken, rt)
 }
 
 // authTokenCookieName 与登录时设置的 Cookie 名称一致
@@ -221,6 +284,11 @@ func (h *Handler) SSORequestLoginHandler(w http.ResponseWriter, r *http.Request)
 	}
 	if redirectURI == "" {
 		writeError(w, "INVALID_REQUEST", "redirect_uri is required", http.StatusBadRequest, "")
+		return
+	}
+	if !h.isRedirectURIAllowed(clientID, redirectURI) {
+		writeError(w, "INVALID_REDIRECT_URI", "redirect_uri is not allowed for this client", http.StatusBadRequest,
+			fmt.Sprintf("SSO redirect_uri not in allowlist: client=%s uri=%s", clientID, redirectURI))
 		return
 	}
 	// state 由服务端生成并绑定 client_id、redirect_uri
@@ -490,8 +558,9 @@ func (h *Handler) TokenHandler(w http.ResponseWriter, r *http.Request) {
 
 // TokenByCodeRequest 前端用 code 换 token 的请求（无子应用后端时使用）
 type TokenByCodeRequest struct {
-	ClientID string `json:"client_id"`
-	Code     string `json:"code"`
+	ClientID    string `json:"client_id"`
+	Code        string `json:"code"`
+	RedirectURI string `json:"redirect_uri"`
 }
 
 // TokenByCodeHandler 前端直连：用 client_id + 登录成功后返回的凭证（redirect_url 中的 code）换取 token，无需 client_secret。
@@ -509,11 +578,12 @@ func (h *Handler) TokenByCodeHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	clientID := strings.TrimSpace(req.ClientID)
 	code := strings.TrimSpace(req.Code)
-	if clientID == "" || code == "" {
-		writeError(w, "INVALID_REQUEST", "client_id and code are required", http.StatusBadRequest, "")
+	redirectURI := strings.TrimSpace(req.RedirectURI)
+	if clientID == "" || code == "" || redirectURI == "" {
+		writeError(w, "INVALID_REQUEST", "client_id, code and redirect_uri are required", http.StatusBadRequest, "")
 		return
 	}
-	userID, codeClientID, _, ok := h.CodeStore.GetAndConsume(code)
+	userID, codeClientID, codeRedirectURI, ok := h.CodeStore.GetAndConsume(code)
 	if !ok {
 		writeError(w, "INVALID_GRANT", "invalid or expired code", http.StatusBadRequest, "")
 		return
@@ -522,33 +592,18 @@ func (h *Handler) TokenByCodeHandler(w http.ResponseWriter, r *http.Request) {
 		writeError(w, "INVALID_GRANT", "code was not issued for this client_id", http.StatusBadRequest, "")
 		return
 	}
+	if codeRedirectURI != redirectURI {
+		writeError(w, "INVALID_GRANT", "redirect_uri does not match", http.StatusBadRequest,
+			fmt.Sprintf("token-by-code redirect_uri mismatch: client=%s got=%s want=%s", clientID, redirectURI, codeRedirectURI))
+		return
+	}
 	accessToken, err := h.AuthService.IssueToken(r.Context(), userID)
 	if err != nil {
 		writeError(w, "INTERNAL_ERROR", "Failed to issue token", http.StatusInternalServerError, "")
 		return
 	}
 	// Cookie 落在认证中心域；前端若与认证中心同源可直接带 Cookie 访问 /me、/validate；若跨域且需 user_id 可再调 GET /me（带 credentials）
-	http.SetCookie(w, &http.Cookie{
-		Name:     authTokenCookieName,
-		Value:    accessToken,
-		Path:     "/",
-		MaxAge:   h.AccessTokenExpireSec,
-		HttpOnly: true,
-		Secure:   true,
-		SameSite: http.SameSiteLaxMode,
-	})
-	refreshExpiry := time.Duration(h.RefreshTokenExpireSec) * time.Second
-	if rt, rterr := h.AuthService.IssueRefreshToken(r.Context(), userID, refreshExpiry); rterr == nil {
-		http.SetCookie(w, &http.Cookie{
-			Name:     refreshTokenCookieName,
-			Value:    rt,
-			Path:     refreshTokenCookiePath,
-			MaxAge:   h.RefreshTokenExpireSec,
-			HttpOnly: true,
-			Secure:   true,
-			SameSite: http.SameSiteLaxMode,
-		})
-	}
+	h.setTokenCookies(w, r.Context(), accessToken, userID)
 	w.Header().Set("Content-Type", "application/json")
 	_ = json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
 }
@@ -568,24 +623,7 @@ func (h *Handler) RefreshHandler(w http.ResponseWriter, r *http.Request) {
 			"refresh failed: "+err.Error())
 		return
 	}
-	http.SetCookie(w, &http.Cookie{
-		Name:     authTokenCookieName,
-		Value:    newAccessToken,
-		Path:     "/",
-		MaxAge:   h.AccessTokenExpireSec,
-		HttpOnly: true,
-		Secure:   true,
-		SameSite: http.SameSiteLaxMode,
-	})
-	http.SetCookie(w, &http.Cookie{
-		Name:     refreshTokenCookieName,
-		Value:    newRefreshToken,
-		Path:     refreshTokenCookiePath,
-		MaxAge:   h.RefreshTokenExpireSec,
-		HttpOnly: true,
-		Secure:   true,
-		SameSite: http.SameSiteLaxMode,
-	})
+	h.writeTokenCookies(w, newAccessToken, newRefreshToken)
 	w.WriteHeader(http.StatusNoContent)
 }
 

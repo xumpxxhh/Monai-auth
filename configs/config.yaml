@@ -19,7 +19,8 @@ server:
     - client_id: mark-live
       client_secret: "your_client_secret_for_money"
       allowed_redirect_uris:
-        - "http://localhost:5174/callback"
+        - "https://www.xump.cn"
+        - "https://xump.cn"
 
 database:
   host: localhost
