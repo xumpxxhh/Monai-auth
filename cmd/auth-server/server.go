@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 
@@ -50,6 +51,7 @@ func (w *cacheControlResponseWriter) Write(p []byte) (int, error) {
 // registerRoutes 注册所有 HTTP 路由
 func registerRoutes(r *chi.Mux, h *httptransport.Handler, allowedOrigins []string) {
 	r.Use(httptransport.LoggerMiddleware)
+	r.Use(httptransport.RateLimitMiddleware(10, time.Minute))
 	if len(allowedOrigins) > 0 {
 		r.Use(httptransport.CORSMiddleware(allowedOrigins))
 	}
