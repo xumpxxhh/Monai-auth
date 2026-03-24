@@ -28,10 +28,10 @@ func (r *gormRefreshTokenRepository) Save(ctx context.Context, rt *domain.Refres
 	return r.db.WithContext(ctx).Create(m).Error
 }
 
-func (r *gormRefreshTokenRepository) FindByToken(ctx context.Context, token string) (*domain.RefreshToken, error) {
+func (r *gormRefreshTokenRepository) FindByToken(ctx context.Context, tokenHash string) (*domain.RefreshToken, error) {
 	var m RefreshTokenGORM
 	err := r.db.WithContext(ctx).
-		Where("token = ? AND expires_at > ?", token, time.Now()).
+		Where("token = ? AND expires_at > ?", tokenHash, time.Now()).
 		First(&m).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -48,9 +48,9 @@ func (r *gormRefreshTokenRepository) FindByToken(ctx context.Context, token stri
 	}, nil
 }
 
-func (r *gormRefreshTokenRepository) DeleteByToken(ctx context.Context, token string) error {
+func (r *gormRefreshTokenRepository) DeleteByToken(ctx context.Context, tokenHash string) error {
 	return r.db.WithContext(ctx).
-		Where("token = ?", token).
+		Where("token = ?", tokenHash).
 		Delete(&RefreshTokenGORM{}).Error
 }
 

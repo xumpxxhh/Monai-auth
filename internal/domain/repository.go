@@ -24,21 +24,21 @@ type UserRepository interface {
 type RefreshToken struct {
 	ID        int64
 	UserID    int64
-	Token     string
+	Token     string // 持久化存 SHA256(明文) 的 hex，不存明文
 	ExpiresAt time.Time
 	CreatedAt time.Time
 }
 
 // RefreshTokenRepository Refresh Token 持久化接口
 type RefreshTokenRepository interface {
-	// Save 保存一个新的 refresh token
+	// Save 保存一个新的 refresh token（rt.Token 为哈希值）
 	Save(ctx context.Context, rt *RefreshToken) error
 
-	// FindByToken 根据 token 字符串查找（仅返回未过期记录）
-	FindByToken(ctx context.Context, token string) (*RefreshToken, error)
+	// FindByToken 根据 token 的哈希查找（仅返回未过期记录）
+	FindByToken(ctx context.Context, tokenHash string) (*RefreshToken, error)
 
-	// DeleteByToken 删除指定 token（登出/轮换时调用）
-	DeleteByToken(ctx context.Context, token string) error
+	// DeleteByToken 删除指定 token 哈希对应记录（登出/轮换时调用）
+	DeleteByToken(ctx context.Context, tokenHash string) error
 
 	// DeleteByUserID 删除某用户的所有 refresh token（强制下线时调用）
 	DeleteByUserID(ctx context.Context, userID int64) error

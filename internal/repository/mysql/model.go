@@ -34,7 +34,7 @@ func (UserGORM) TableName() string {
 type RefreshTokenGORM struct {
 	ID        int64     `gorm:"primaryKey;autoIncrement"`
 	UserID    int64     `gorm:"not null;index"`
-	Token     string    `gorm:"type:varchar(128);not null;uniqueIndex"`
+	Token     string    `gorm:"type:varchar(128);not null;uniqueIndex"` // SHA256 hex，非明文
 	ExpiresAt time.Time `gorm:"not null;index"`
 	CreatedAt time.Time
 }

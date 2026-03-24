@@ -147,7 +147,7 @@ func (s *authService) IssueRefreshToken(ctx context.Context, userID int64, expir
 	}
 	rt := &domain.RefreshToken{
 		UserID:    userID,
-		Token:     tokenStr,
+		Token:     hashRefreshToken(tokenStr),
 		ExpiresAt: time.Now().Add(expiry),
 	}
 	if err := s.refreshTokenRepo.Save(ctx, rt); err != nil {
@@ -157,7 +157,7 @@ func (s *authService) IssueRefreshToken(ctx context.Context, userID int64, expir
 }
 
 func (s *authService) RefreshAccessToken(ctx context.Context, refreshToken string, refreshExpiry time.Duration) (string, string, error) {
-	rt, err := s.refreshTokenRepo.FindByToken(ctx, refreshToken)
+	rt, err := s.refreshTokenRepo.FindByToken(ctx, hashRefreshToken(refreshToken))
 	if err != nil {
 		return "", "", errors.New("invalid or expired refresh token")
 	}
@@ -171,7 +171,7 @@ func (s *authService) RefreshAccessToken(ctx context.Context, refreshToken strin
 		return "", "", fmt.Errorf("failed to generate access token: %w", err)
 	}
 	// 轮换 refresh token：删除旧的，生成新的
-	if err := s.refreshTokenRepo.DeleteByToken(ctx, refreshToken); err != nil {
+	if err := s.refreshTokenRepo.DeleteByToken(ctx, hashRefreshToken(refreshToken)); err != nil {
 		return "", "", fmt.Errorf("failed to revoke old refresh token: %w", err)
 	}
 	newRefreshToken, err := s.IssueRefreshToken(ctx, user.ID, refreshExpiry)
@@ -182,7 +182,7 @@ func (s *authService) RefreshAccessToken(ctx context.Context, refreshToken strin
 }
 
 func (s *authService) RevokeRefreshToken(ctx context.Context, refreshToken string) error {
-	return s.refreshTokenRepo.DeleteByToken(ctx, refreshToken)
+	return s.refreshTokenRepo.DeleteByToken(ctx, hashRefreshToken(refreshToken))
 }
 
 func (s *authService) RevokeAllRefreshTokens(ctx context.Context, userID int64) error {
