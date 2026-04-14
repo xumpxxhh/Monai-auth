@@ -1,4 +1,7 @@
-// 临时脚本：创建 user_assets 表。在项目根目录执行: go run scripts/create_user_assets.go
+//go:build create_user_assets
+// +build create_user_assets
+
+// 临时脚本：创建 user_assets 表。在项目根目录执行: go run -tags create_user_assets scripts/create_user_assets.go
 package main
 
 import (

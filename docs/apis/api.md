@@ -2,7 +2,7 @@
 
 ## 基础信息
 
-- **Base URL**: `http://localhost:8888`（本地环境，默认端口来自 `configs/config.yaml`，以实际配置为准）
+- **Base URL**: `http://localhost:8888`（本地服务默认监听端口来自 `configs/config.yaml` 的 `server.port`；若经 Nginx 反向代理，对外访问地址以部署配置为准）
 - **Content-Type**: 请求/响应均使用 `application/json`（除空响应）
 - **鉴权方式**: JWT，默认通过 **HttpOnly Cookie** 传递，同时兼容 `Authorization: Bearer <token>` 头部
 
@@ -45,7 +45,7 @@
 
 | 方法 | 路径                       | 说明                                                 |
 | ---- | -------------------------- | ---------------------------------------------------- |
-| GET  | /api/v1/auth/request-login | 获取登录页完整 URL（SSO）                            |
+| GET  | /api/v1/auth/request-login | 获取登录页完整 URL（SSO，需提供 PKCE challenge）    |
 | POST | /api/v1/auth/login         | 登录，下发 access_token + refresh_token Cookie       |
 | POST | /api/v1/auth/logout        | 登出，吊销 refresh_token，清除两个 Cookie            |
 | POST | /api/v1/auth/refresh       | 用 refresh_token 换发新的 access_token（Token 轮换） |
@@ -105,14 +105,16 @@ axios.interceptors.response.use(null, async (error) => {
 ### 0.1 子应用请求登录
 
 - **URL**: `GET /api/v1/auth/request-login`
-- **说明**: 子应用发现用户未登录时调用此接口，获取认证中心登录页的**完整 URL**；**不**做 302 重定向，仅返回 JSON。`state` 由服务端生成并绑定本次请求。
+- **说明**: 子应用发现用户未登录时调用此接口，获取认证中心登录页的**完整 URL**；**不**做 302 重定向，仅返回 JSON。`state` 由服务端生成，并绑定本次请求的 `client_id`、`redirect_uri` 与 PKCE challenge。
 
 ### Query 参数
 
-| 参数         | 必填 | 说明                                 |
-| ------------ | ---- | ------------------------------------ |
-| client_id    | 是   | 在认证中心注册的客户端 ID            |
-| redirect_uri | 是   | 登录成功后要重定向回的子应用回调地址 |
+| 参数                  | 必填 | 说明                                                                 |
+| --------------------- | ---- | -------------------------------------------------------------------- |
+| client_id             | 是   | 在认证中心注册的客户端 ID                                            |
+| redirect_uri          | 是   | 登录成功后要重定向回的子应用回调地址，必须命中该 `client_id` 的白名单 |
+| code_challenge        | 是   | PKCE 挑战值，当前仅支持 `S256`                                       |
+| code_challenge_method | 否   | 固定为 `S256`；不传时服务端默认按 `S256` 处理                        |
 
 ### Success Response
 
@@ -120,15 +122,16 @@ axios.interceptors.response.use(null, async (error) => {
 
 ```json
 {
-  "login_url": "/monai/login?client_id=xxx&redirect_uri=xxx&state=xxx"
+  "login_url": "http://localhost:5173/auth?client_id=xxx&redirect_uri=xxx&state=xxx"
 }
 ```
 
-- `login_url` 为认证中心登录页的完整路径，其中 `state` 由服务端生成（约 10 分钟有效），子应用或前端需跳转到该 URL 让用户登录；登录页提交时需将 URL 中的 `state` 以 `server_state` 字段提交给 `POST /api/v1/auth/login`。
+- `login_url` 为认证中心登录页完整地址，其中 `state` 由服务端生成（约 10 分钟有效），并绑定 `client_id`、`redirect_uri` 与 PKCE challenge。
+- 子应用或前端需跳转到该 URL 让用户登录；登录页提交时需将 URL 中的 `state` 以 `server_state` 字段提交给 `POST /api/v1/auth/login`。
 
 ### 错误响应
 
-- **400**：缺少 `client_id` 或 `redirect_uri`。
+- **400**：缺少 `client_id`、`redirect_uri`、`code_challenge`，或 `redirect_uri` 不在白名单内，或 `code_challenge_method` 非 `S256`。
 
 ---
 
@@ -137,9 +140,9 @@ axios.interceptors.response.use(null, async (error) => {
 用户在认证中心登录页（即 0.1 返回的 `login_url`）输入账号密码，提交到 `POST /api/v1/auth/login`。请求体需包含：
 
 - `email`、`password`
-- **SSO 必带**：`server_state`（登录页 URL 中的 `state` 参数，供服务端取回 client_id/redirect_uri）
+- **SSO 必带**：`server_state`（登录页 URL 中的 `state` 参数，供服务端取回 `client_id`、`redirect_uri` 与 PKCE challenge）
 
-登录成功后，认证中心**不**做 302，而是返回 JSON，包含子应用回调的完整 URL：`{ "redirect_url": "https://子应用/callback?code=xxx&state=xxx" }`，其中 `state` 与登录页 URL 中的一致；前端或子应用收到后自行跳转。**不**在 URL 中带 token，仅带一次性授权码。
+登录成功后，认证中心**不**做 302，而是返回 JSON，包含子应用回调的完整 URL：`{ "redirect_url": "https://子应用/callback?code=xxx" }`；前端或子应用收到后自行跳转。**不**在 URL 中带 token，仅带一次性授权码。
 
 ---
 
@@ -181,14 +184,16 @@ axios.interceptors.response.use(null, async (error) => {
 ### 0.4 前端直连：用 code 换 token（无子应用后端时）
 
 - **URL**: `POST /api/v1/auth/token-by-code`
-- **说明**: 没有子应用后端时，前端可直接用登录成功后拿到的凭证换取 token。登录接口在 SSO 流程下会返回 `{"redirect_url": "https://xxx/callback?code=xxx&state=xxx"}`，前端从 `redirect_url` 中解析出 `code`，再携带 `client_id` 和 `code` 调用本接口，**无需** `client_secret`。成功后设置 `auth_token` 和 `refresh_token` 两个 **HttpOnly Cookie**，token 不通过 body 返回；若需用户信息可再调 `GET /api/v1/auth/me`。
+- **说明**: 没有子应用后端时，前端可直接用登录成功后拿到的凭证换取 token。登录接口在 SSO 流程下会返回 `{"redirect_url": "https://xxx/callback?code=xxx"}`，前端从 `redirect_url` 中解析出 `code`，再携带 `client_id`、`redirect_uri` 和 `code_verifier` 调用本接口，**无需** `client_secret`。成功后设置 `auth_token` 和 `refresh_token` 两个 **HttpOnly Cookie**，token 不通过 body 返回；若需用户信息可再调 `GET /api/v1/auth/me`。
 
 ### Request Body
 
 ```json
 {
   "client_id": "mark-live",
-  "code": "从 redirect_url 的 query 中解析出的 code"
+  "code": "从 redirect_url 的 query 中解析出的 code",
+  "redirect_uri": "http://localhost:5174/callback",
+  "code_verifier": "前端生成并保留的 PKCE verifier"
 }
 ```
 
@@ -204,14 +209,14 @@ axios.interceptors.response.use(null, async (error) => {
 
 ### 错误响应
 
-- **400**：缺少 `client_id` 或 `code`，或 `code` 无效/过期、或 `code` 并非该 `client_id` 颁发（`INVALID_GRANT`）。
+- **400**：缺少 `client_id`、`code`、`redirect_uri` 或 `code_verifier`，或 `code` 无效/过期、或 `code` 并非该 `client_id` 颁发、或 `redirect_uri` / PKCE 校验失败（`INVALID_GRANT`）。
 
 ---
 
 ## 1) 用户登录
 
 - **URL**: `POST /api/v1/auth/login`
-- **说明**: 邮箱+密码登录。若请求体带 **server_state**（SSO 流程），登录成功后在 **body** 中返回子应用回调地址 `redirect_url`（不 302）；否则设置 `auth_token` 和 `refresh_token` 两个 **HttpOnly Cookie** 并返回 `{"status": "ok"}`。
+- **说明**: 邮箱+密码登录。若请求体带 **server_state**（SSO 流程），登录成功后在 **body** 中返回子应用回调地址 `redirect_url`（不 302，仅附带一次性授权码）；否则设置 `auth_token` 和 `refresh_token` 两个 **HttpOnly Cookie** 并返回 `{"status": "ok"}`。
 
 ### Request Body
 
@@ -242,10 +247,10 @@ axios.interceptors.response.use(null, async (error) => {
 - **200 OK**
 
 ```json
-{ "redirect_url": "https://子应用/callback?code=xxx&state=xxx" }
+{ "redirect_url": "https://子应用/callback?code=xxx" }
 ```
 
-- 不 302，前端或子应用根据 `redirect_url` 自行跳转。子应用有后端时可调 `POST /api/v1/auth/token`（带 client_secret）换 token；无后端时前端可调 `POST /api/v1/auth/token-by-code`（带 client_id + code）换 token。
+- 不 302，前端或子应用根据 `redirect_url` 自行跳转。子应用有后端时可调 `POST /api/v1/auth/token`（带 `client_secret`）换 token；无后端时前端可调 `POST /api/v1/auth/token-by-code`（带 `client_id`、`code`、`redirect_uri`、`code_verifier`）换 token。
 
 ### Error Responses
 
@@ -450,7 +455,7 @@ axios.interceptors.response.use(null, async (error) => {
 ## 7) 上传静态资源
 
 - **URL**: `POST /api/v1/auth/upload`
-- **说明**: 上传文件，需鉴权。通过 token 获取当前用户，文件保存至 `uploads/<用户名>/<文件名>`；用户名会做安全替换（仅保留字母数字、下划线、横线、点）。上传成功后返回资源访问路径与完整 URL。
+- **说明**: 上传文件，需鉴权。通过 token 获取当前用户，文件保存至 `uploads/<用户名>/<文件名>`；用户名会做安全替换（仅保留字母数字、下划线、横线、点）。上传成功后返回资源访问路径与完整 URL。服务端仅暴露 `/static/uploads/*`。
 
 ### Headers
 
@@ -471,17 +476,17 @@ axios.interceptors.response.use(null, async (error) => {
 {
   "path": "uploads/user_example_com/avatar.jpg",
   "route": "/static/uploads/user_example_com/avatar.jpg",
-  "access_url": "/static/uploads/user_example_com/avatar.jpg"
+  "access_url": "http://localhost:8888/static/uploads/user_example_com/avatar.jpg"
 }
 ```
 
 - **path**：相对路径，服务端存储路径。
-- **route**：静态资源路由，同源下可直接用于前端（如 `<img src="/static/...">`）。
+- **route**：静态资源路由，同源下可直接用于前端（如 `<img src="/static/uploads/...">`）。
 - **access_url**：完整可访问 URL，可直接用于跨域或分享；协议会根据请求（含 `X-Forwarded-Proto`）自动判断。
 
 ### 静态资源访问
 
-上传后的文件可通过 `GET /static/uploads/<用户名>/<文件名>` 访问（或使用返回的 `access_url`）。
+上传后的文件可通过 `GET /static/uploads/<用户名>/<文件名>` 访问（或使用返回的 `access_url`）。当前不会暴露 `uploads` 之外的其他工作目录文件。
 
 ### Error Responses
 
@@ -501,8 +506,9 @@ axios.interceptors.response.use(null, async (error) => {
 | `server.jwt_expiration_hours`      | access_token 有效期（小时），取值 1~720       | `2`            |
 | `server.refresh_token_expiry_days` | refresh_token 有效期（天）                    | `7`            |
 | `server.allowed_origins`           | 允许跨域的前端域名列表                        | `[]`           |
-| `server.auth_base_url`             | 认证中心对外完整 base URL，用于拼接登录页地址 | `/`            |
-| `server.login_page_path`           | SSO 登录页路径                                | `/monai/login` |
+| `server.allowed_redirect_uris`     | 已废弃的旧字段，当前不参与 SSO 白名单校验     | `[]`           |
+| `server.auth_base_url`             | 认证中心对外完整 base URL，用于拼接登录页地址；为空时回退 `http://localhost:<server.port>` | `/`            |
+| `server.login_page_path`           | SSO 登录页路径                                | `/auth`        |
 | `server.clients`                   | 子应用客户端列表（SSO 授权码流程）            | `[]`           |
 | `database.host`                    | MySQL 主机                                    | —              |
 | `database.port`                    | MySQL 端口                                    | `3306`         |
@@ -526,7 +532,7 @@ Refresh Token 存储表，启动时自动创建。建表脚本见 `scripts/creat
 | ---------- | --------------------- | ----------------------- |
 | id         | BIGINT AUTO_INCREMENT | 主键                    |
 | user_id    | BIGINT                | 所属用户，关联 users.id |
-| token      | VARCHAR(128) UNIQUE   | 64 位十六进制随机串     |
+| token      | VARCHAR(128) UNIQUE   | Refresh Token 的 SHA-256 哈希值 |
 | expires_at | DATETIME              | Token 过期时间          |
 | created_at | DATETIME              | 签发时间                |
 
@@ -586,7 +592,7 @@ curl -X GET "/api/v1/auth/me" \
 ### 请求登录（SSO）
 
 ```bash
-curl -X GET "/api/v1/auth/request-login?client_id=mark-live&redirect_uri=http://localhost:5174/callback"
+curl -X GET "/api/v1/auth/request-login?client_id=mark-live&redirect_uri=http://localhost:5174/callback&code_challenge=YQYk0W1Qm4n2dJdJfY2f3oB1n4V0dV8sQeM7w0X3c1Q&code_challenge_method=S256"
 ```
 
 ### 前端用 code 换 token
@@ -594,7 +600,7 @@ curl -X GET "/api/v1/auth/request-login?client_id=mark-live&redirect_uri=http://
 ```bash
 curl -X POST "/api/v1/auth/token-by-code" \
   -H "Content-Type: application/json" \
-  -d '{"client_id":"mark-live","code":"从 redirect_url 解析的 code"}' \
+  -d '{"client_id":"mark-live","code":"从 redirect_url 解析的 code","redirect_uri":"http://localhost:5174/callback","code_verifier":"前端生成并保留的 verifier"}' \
   -c cookies.txt -b cookies.txt
 ```
 

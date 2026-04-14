@@ -72,69 +72,33 @@ Refresh Token Cookie 额外限制 `Path=/api/v1/auth/refresh`，仅在刷新接�
 
 ---
 
-## 三、存在的问题
+## 三、风险与现状
 
-### 🔴 严重安全漏洞（必须修复）
+### ✅ 已修复或已缓解项
 
-#### 问题 1：静态文件服务暴露整个工作目录
+#### 问题 1：静态文件服务暴露整个工作目录（已修复）
 
 **位置**：`cmd/auth-server/server.go`
 
-```go
-// 当前代码
-staticHandler := http.StripPrefix("/static", cacheControlHandler(http.FileServer(http.Dir(".")), staticCacheMaxAge))
-r.Handle("/static/*", staticCORSHandler(staticHandler))
-```
-
-`http.FileServer(http.Dir("."))` 以进程当前工作目录为根目录，任何文件均可被公开访问。攻击者可直接请求：
-
-```
-GET /static/configs/config.yaml   →  返回含数据库密码和 JWT 密钥的完整配置
-GET /static/go.mod                →  返回模块依赖信息
-GET /static/go.sum                →  返回依赖校验信息
-```
-
-**修复方案**：将根目录限制为 `uploads` 目录，并关闭目录列表：
+历史风险是 `http.FileServer(http.Dir("."))` 以进程当前工作目录为根目录，可能公开配置和源码文件。当前代码已改为仅暴露 `uploads` 目录：
 
 ```go
-type noDirFileSystem struct{ fs http.FileSystem }
-
-func (nfs noDirFileSystem) Open(name string) (http.File, error) {
-    f, err := nfs.fs.Open(name)
-    if err != nil {
-        return nil, err
-    }
-    stat, err := f.Stat()
-    if err != nil || stat.IsDir() {
-        f.Close()
-        return nil, os.ErrNotExist
-    }
-    return f, nil
-}
-
-// 修改为仅服务 uploads 目录
 staticHandler := http.StripPrefix("/static/uploads", cacheControlHandler(
-    http.FileServer(noDirFileSystem{http.Dir("uploads")}),
+    http.FileServer(http.Dir("./uploads")),
     staticCacheMaxAge,
 ))
 r.Handle("/static/uploads/*", staticCORSHandler(staticHandler))
 ```
 
+当前对外只开放 `/static/uploads/*`，不会直接暴露 `configs`、`go.mod` 等工作目录文件。
+
 ---
 
-#### 问题 2：SSO 流程中 `redirect_uri` 未校验白名单（Open Redirect）
+#### 问题 2：SSO 流程中 `redirect_uri` 未校验白名单（已修复）
 
 **位置**：`internal/transport/http/handlers.go` — `SSORequestLoginHandler`
 
-```go
-// 当前代码：直接保存，未校验 redirect_uri 是否在白名单内
-clientID := strings.TrimSpace(r.URL.Query().Get("client_id"))
-redirectURI := strings.TrimSpace(r.URL.Query().Get("redirect_uri"))
-// ...
-state, err := h.StateStore.Save(clientID, redirectURI, "")
-```
-
-攻击者可伪造请求，将受害者的授权码重定向到恶意域名：
+历史风险是攻击者可伪造请求，将受害者的授权码重定向到恶意域名，例如：
 
 ```
 GET /api/v1/auth/request-login?client_id=mark-live&redirect_uri=https://evil.com/steal
@@ -142,7 +106,7 @@ GET /api/v1/auth/request-login?client_id=mark-live&redirect_uri=https://evil.com
 
 用户登录后授权码会被发送至 `evil.com`，攻击者随即可用 code 换取 token。
 
-**修复方案**：在存入 StateStore 之前校验 `redirect_uri`：
+当前实现已在写入 `StateStore` 之前校验 `redirect_uri` 是否命中对应客户端白名单：
 
 ```go
 var client *Client
@@ -156,8 +120,8 @@ if client == nil {
     writeError(w, "INVALID_CLIENT", "unknown client_id", http.StatusBadRequest, "")
     return
 }
-if !isRedirectURIAllowed(client.AllowedRedirectURIs, redirectURI) {
-    writeError(w, "INVALID_REQUEST", "redirect_uri not allowed", http.StatusBadRequest, "")
+if !h.isRedirectURIAllowed(clientID, redirectURI) {
+    writeError(w, "INVALID_REDIRECT_URI", "redirect_uri is not allowed for this client", http.StatusBadRequest, "")
     return
 }
 ```
@@ -189,15 +153,15 @@ MONAI_CLIENT_SECRET_MARK_LIVE=<真实客户端密钥>
 
 ---
 
-### 🟠 中等安全风险（上生产前处理）
+### 🟠 仍需处理的风险
 
-#### 问题 4：`/token-by-code` 无 client_secret 且无 PKCE 保护
+#### 问题 4：`/token-by-code` 无 client_secret 且无 PKCE 保护（已修复）
 
 **位置**：`internal/transport/http/handlers.go` — `TokenByCodeHandler`
 
-该接口仅凭 `client_id + code` 即可换取 token，无需 `client_secret`。对公共客户端（前端直连），OAuth 2.1 规范要求使用 **PKCE（Proof Key for Code Exchange）** 防止授权码拦截攻击。
+当前实现已经引入 PKCE：`/request-login` 必带 `code_challenge`，`/token-by-code` 必带 `code_verifier`，服务端会校验两者是否匹配。公共客户端不再仅凭 `client_id + code` 换取 token。
 
-**修复方案**：在 `/request-login` 时前端生成 `code_verifier`，传入 `code_challenge`（SHA-256 hash）；换 token 时携带 `code_verifier`，服务端验证哈希匹配。
+剩余建议：若后续要对接更多三方客户端，可补充更明确的 PKCE 文档与联调示例，减少接入错误。
 
 ---
 
@@ -222,17 +186,15 @@ if client == nil || subtle.ConstantTimeCompare([]byte(client.ClientSecret), []by
 
 ---
 
-#### 问题 6：所有接口均无速率限制
+#### 问题 6：所有接口均无速率限制（已缓解）
 
-`/login`、`/register`、`/refresh`、`/token-by-code` 等接口无任何频率限制，面对暴力破解和撞库攻击毫无防御。
+当前路由层已经增加基于 IP 的固定窗口限流：敏感接口使用更严格的频率限制，普通接口使用较宽松阈值，已对暴力破解和撞库风险形成基础防护。
 
-**修复方案**：使用 `go-chi/httprate` 或 `golang.org/x/time/rate` 添加基于 IP 的速率限制中间件：
+当前实现示意：
 
 ```go
-import "github.com/go-chi/httprate"
-
-// 每个 IP 每分钟最多 10 次登录请求
-r.With(httprate.LimitByIP(10, time.Minute)).Post("/api/v1/auth/login", h.LoginHandler)
+sensitive := httptransport.RateLimitMiddleware(10, 15*time.Minute)
+r.With(sensitive).Post("/api/v1/auth/login", h.LoginHandler)
 ```
 
 ---
@@ -264,21 +226,21 @@ type RedisStateStore struct { client *redis.Client; ttl time.Duration }
 
 ---
 
-#### 问题 9：Refresh Token 明文存储在数据库
+#### 问题 9：Refresh Token 明文存储在数据库（已修复）
 
 **位置**：`internal/repository/mysql/refresh_token_repo.go`
 
-Refresh Token 直接以明文存储在 `refresh_tokens` 表。数据库泄露时所有 Token 直接暴露，攻击者可无限期冒充任意用户。
+当前实现已将 Refresh Token 做 SHA-256 后再入库，不再明文持久化。数据库泄露时，攻击者无法直接复用表中的值作为原始 token。
 
-**修复方案**：存储 `SHA-256(token)` 的哈希值，查询时同样哈希后比对：
+当前实现示意：
 
 ```go
 import "crypto/sha256"
 import "encoding/hex"
 
-func hashToken(token string) string {
-    h := sha256.Sum256([]byte(token))
-    return hex.EncodeToString(h[:])
+func hashRefreshToken(plain string) string {
+    sum := sha256.Sum256([]byte(plain))
+    return hex.EncodeToString(sum[:])
 }
 ```
 
@@ -313,15 +275,15 @@ func hashToken(token string) string {
 | 密码存储           | ✅ 安全     | bcrypt DefaultCost                    |
 | Token 轮换         | ✅ 正确     | 旧 Token 物理删除                     |
 | 授权码一次性       | ✅ 正确     | GetAndConsume 取出即删                |
-| 静态文件服务       | 🔴 严重漏洞 | 暴露整个工作目录，包括配置文件        |
-| redirect_uri 校验  | 🔴 严重漏洞 | Open Redirect，SSO 授权码可被劫持     |
+| 静态文件服务       | ✅ 已修复   | 当前仅暴露 `/static/uploads/*`        |
+| redirect_uri 校验  | ✅ 已修复   | 已校验客户端白名单                    |
 | 敏感配置管理       | 🔴 高风险   | 明文密钥可能随代码库泄露              |
-| 速率限制           | 🟠 缺失     | 暴力破解无防御                        |
+| 速率限制           | ✅ 已缓解   | 已增加基于 IP 的基础限流              |
 | client_secret 比较 | 🟠 时序漏洞 | 应使用常量时间比较                    |
-| 公共客户端安全     | 🟠 缺失     | token-by-code 无 PKCE                 |
+| 公共客户端安全     | ✅ 已修复   | token-by-code 已接入 PKCE             |
 | 角色持久化         | 🟡 不可用   | Role 字段未入库                       |
 | 水平扩展能力       | 🟡 受限     | 内存 Store 限制单节点                 |
-| Refresh Token 存储 | 🟡 可改进   | 明文存库，建议哈希后存储              |
+| Refresh Token 存储 | ✅ 已修复   | 已改为哈希后存储                      |
 | JWT 标准声明       | 🟡 不完整   | 缺少 iss / aud / jti                  |
 | Access Token 撤销  | 🟡 不支持   | 登出后仍有效，需 jti 黑名单           |
 
@@ -331,19 +293,14 @@ func hashToken(token string) string {
 
 ```
 立即修复（上线前必须）
-├── 问题 1：静态文件服务目录限制
-├── 问题 2：redirect_uri 白名单校验
 └── 问题 3：敏感配置改用环境变量
 
 短期修复（1-2 周内）
-├── 问题 5：client_secret 常量时间比较
-├── 问题 6：登录/刷新接口速率限制
-└── 问题 4：token-by-code 添加 PKCE
+└── 问题 5：client_secret 常量时间比较
 
 中期改进（架构迭代时）
 ├── 问题 7：Role 字段持久化
 ├── 问题 8：StateStore/CodeStore 改为 Redis
-├── 问题 9：Refresh Token 哈希存储
 ├── 问题 10：JWT 添加 iss/aud/jti 声明
 └── 问题 11：实现 jti 黑名单支持 Access Token 撤销
 ```

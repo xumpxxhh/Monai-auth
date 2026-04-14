@@ -1,4 +1,7 @@
-// 临时脚本：创建 users 表。在项目根目录执行: go run scripts/create_users.go
+//go:build create_users
+// +build create_users
+
+// 临时脚本：创建 users 表。在项目根目录执行: go run -tags create_users scripts/create_users.go
 package main
 
 import (

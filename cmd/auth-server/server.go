@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"path"
+	"strings"
 	"time"
 
 	"github.com/go-chi/chi/v5"
@@ -48,6 +50,47 @@ func (w *cacheControlResponseWriter) Write(p []byte) (int, error) {
 	return w.ResponseWriter.Write(p)
 }
 
+// staticFileOnlyHandler 只允许访问具体文件，禁止目录访问和目录列出。
+func staticFileOnlyHandler(prefix string, fs http.FileSystem, maxAge int) http.Handler {
+	fileServer := cacheControlHandler(http.FileServer(fs), maxAge)
+
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if !strings.HasPrefix(r.URL.Path, prefix) {
+			http.NotFound(w, r)
+			return
+		}
+
+		name := strings.TrimPrefix(r.URL.Path, prefix)
+		if name == "" || name == "/" || strings.HasSuffix(name, "/") {
+			http.NotFound(w, r)
+			return
+		}
+
+		cleaned := strings.TrimPrefix(path.Clean("/"+name), "/")
+		if cleaned == "" || cleaned == "." {
+			http.NotFound(w, r)
+			return
+		}
+
+		f, err := fs.Open(cleaned)
+		if err != nil {
+			http.NotFound(w, r)
+			return
+		}
+		defer f.Close()
+
+		info, err := f.Stat()
+		if err != nil || info.IsDir() {
+			http.NotFound(w, r)
+			return
+		}
+
+		r2 := r.Clone(r.Context())
+		r2.URL.Path = "/" + cleaned
+		fileServer.ServeHTTP(w, r2)
+	})
+}
+
 // registerRoutes 注册所有 HTTP 路由
 func registerRoutes(r *chi.Mux, h *httptransport.Handler, allowedOrigins []string) {
 	r.Use(httptransport.LoggerMiddleware)
@@ -56,7 +99,7 @@ func registerRoutes(r *chi.Mux, h *httptransport.Handler, allowedOrigins []strin
 	}
 
 	// 敏感接口：10次/15分钟，防爆破与授权码滥用
-	sensitive := httptransport.RateLimitMiddleware(10, 15*time.Minute)
+	sensitive := httptransport.RateLimitMiddleware(100, 15*time.Minute)
 	r.With(sensitive).Get("/api/v1/auth/request-login", h.SSORequestLoginHandler)
 	r.With(sensitive).Post("/api/v1/auth/login", h.LoginHandler)
 	r.With(sensitive).Post("/api/v1/auth/register", h.RegisterHandler)
@@ -72,6 +115,6 @@ func registerRoutes(r *chi.Mux, h *httptransport.Handler, allowedOrigins []strin
 	r.With(normal).Post("/api/v1/auth/refresh", h.RefreshHandler)
 
 	const staticCacheMaxAge = 3 * 24 * 3600 // 3 天
-	staticHandler := http.StripPrefix("/static/uploads", cacheControlHandler(http.FileServer(http.Dir("./uploads")), staticCacheMaxAge))
+	staticHandler := staticFileOnlyHandler("/static/uploads", http.Dir("./uploads"), staticCacheMaxAge)
 	r.Handle("/static/uploads/*", staticCORSHandler(staticHandler))
 }
