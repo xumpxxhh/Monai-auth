@@ -96,8 +96,8 @@ func (h *Handler) ValidateHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	_ = json.NewEncoder(w).Encode(UserInfoResponse{
-		ID:   user.ID,
-		Role: user.Role,
+		ID:    user.ID,
+		Email: user.Email,
 	})
 }
 
@@ -124,7 +124,6 @@ func (h *Handler) MeHandler(w http.ResponseWriter, r *http.Request) {
 		ID:        user.ID,
 		Username:  user.Username,
 		Email:     user.Email,
-		Role:      user.Role,
 		CreatedAt: createdAt,
 	})
 }

@@ -11,7 +11,6 @@ import (
 type User struct {
 	ID           int64
 	Username     string
-	Role         string
 	Email        string
 	PasswordHash string
 	CreatedAt    time.Time

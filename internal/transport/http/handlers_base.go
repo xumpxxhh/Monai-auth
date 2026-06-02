@@ -50,8 +50,8 @@ type HandlerOpts struct {
 
 // UserInfoResponse 验证接口返回的用户信息
 type UserInfoResponse struct {
-	ID   int64  `json:"id"`
-	Role string `json:"role"`
+	ID    int64  `json:"id"`
+	Email string `json:"email"`
 }
 
 // CurrentUserResponse 当前用户基本信息（/me）
@@ -59,7 +59,6 @@ type CurrentUserResponse struct {
 	ID        int64  `json:"id"`
 	Username  string `json:"username"`
 	Email     string `json:"email"`
-	Role      string `json:"role"`
 	CreatedAt string `json:"created_at"`
 }
 

@@ -19,7 +19,6 @@ func NewInMemoryUserRepo() *InMemoryUserRepo {
 	initialUser := &domain.User{
 		Email:        "test@example.com",
 		PasswordHash: "$2a$10$w1qZ3gKz0gL8b/Q/hXjU0.Q/hXjU0.Q/hXjU0.Q/hXjU0.Q/hXjU0.Q/hXjU0.Q/hXjU0.Q", // 密码: password123
-		Role:         "admin",
 		CreatedAt:    time.Now(),
 	}
 	return &InMemoryUserRepo{

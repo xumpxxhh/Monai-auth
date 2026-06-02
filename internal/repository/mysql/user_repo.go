@@ -28,7 +28,6 @@ func mapGORMToDomain(gormUser *UserGORM) *domain.User {
 		Username:     gormUser.Username,
 		Email:        gormUser.Email,
 		PasswordHash: gormUser.PasswordHash,
-		Role:         "standard",
 		CreatedAt:    gormUser.CreatedAt,
 	}
 }

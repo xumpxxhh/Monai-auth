@@ -63,7 +63,7 @@ func (s *authService) Login(ctx context.Context, req domain.LoginRequest) (strin
 	}
 
 	// 生成并返回 JWT
-	token, err := s.tokenService.GenerateToken(user.ID, user.Role)
+	token, err := s.tokenService.GenerateToken(user.ID)
 	if err != nil {
 		return "", fmt.Errorf("token generation failed: %w", err)
 	}
@@ -97,7 +97,6 @@ func (s *authService) Register(ctx context.Context, req domain.RegisterRequest) 
 		Username:     username,
 		Email:        req.Email,
 		PasswordHash: string(hashedPassword),
-		Role:         "standard",
 	}
 
 	if err := s.repo.CreateUser(ctx, newUser); err != nil {
@@ -128,7 +127,7 @@ func (s *authService) IssueToken(ctx context.Context, userID int64) (string, err
 	if err != nil {
 		return "", err
 	}
-	return s.tokenService.GenerateToken(user.ID, user.Role)
+	return s.tokenService.GenerateToken(user.ID)
 }
 
 // generateRefreshTokenString 生成 32 字节随机 hex 字符串
@@ -166,7 +165,7 @@ func (s *authService) RefreshAccessToken(ctx context.Context, refreshToken strin
 		return "", "", domain.ErrUserNotFound
 	}
 	// 签发新 access_token
-	accessToken, err := s.tokenService.GenerateToken(user.ID, user.Role)
+	accessToken, err := s.tokenService.GenerateToken(user.ID)
 	if err != nil {
 		return "", "", fmt.Errorf("failed to generate access token: %w", err)
 	}
