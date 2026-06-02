@@ -86,13 +86,9 @@
 
 ## 2.3 P2
 
-### 任务 P2-1：角色模型持久化
+### 任务 P2-1：业务 RBAC（不在认证中心实现）
 
-- 目标：将 `role` 从硬编码改为数据库真实字段，支持 RBAC 扩展。
-- 主要改动：
-  - `internal/repository/mysql/model.go`
-  - `internal/repository/mysql/user_repo.go`
-  - 对应数据库迁移脚本
+- 已明确：认证中心仅负责身份认证（`user_id` 等），不在 `users` 表或 JWT 中承载 `role`；各子应用自行维护本域权限模型。
 
 ### 任务 P2-2：JWT 标准声明增强
 

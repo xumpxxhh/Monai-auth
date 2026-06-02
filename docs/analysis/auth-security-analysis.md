@@ -201,13 +201,9 @@ r.With(sensitive).Post("/api/v1/auth/login", h.LoginHandler)
 
 ### 🟡 设计缺陷（建议改进）
 
-#### 问题 7：用户角色（Role）无法持久化
+#### 设计说明：业务 RBAC 由子应用负责
 
-**位置**：`internal/auth/service.go`、`internal/repository/mysql/model.go`
-
-注册时 Role 硬编码为 `"standard"`，且 `UserGORM` 模型中缺少 `role` 字段，`mapGORMToDomain()` 始终返回 `"standard"`。这使得 RBAC 权限体系无法实现。
-
-**修复方案**：在 `UserGORM` 和 `users` 表中添加 `role` 字段，允许管理员通过接口修改用户角色。
+认证中心（monai-auth）仅承担身份认证：签发/校验 JWT、SSO、账户 `status` 等。不在 `users` 表、领域模型或 JWT 中承载 `role`；各子应用根据 `user_id` 维护本域角色与权限。
 
 ---
 
@@ -250,7 +246,7 @@ func hashRefreshToken(plain string) string {
 
 **位置**：`internal/auth/token.go`
 
-当前 JWT 仅包含 `user_id`、`role`、`exp`、`iat`，缺少：
+当前 JWT 仅包含 `user_id`、`exp`、`iat`，缺少：
 
 - `iss`（颁发者）：多服务环境下无法区分 token 来源，其他服务签发的 token 可能被错误接受
 - `aud`（受众）：无法限制 token 的使用范围
@@ -281,7 +277,6 @@ func hashRefreshToken(plain string) string {
 | 速率限制           | ✅ 已缓解   | 已增加基于 IP 的基础限流              |
 | client_secret 比较 | 🟠 时序漏洞 | 应使用常量时间比较                    |
 | 公共客户端安全     | ✅ 已修复   | token-by-code 已接入 PKCE             |
-| 角色持久化         | 🟡 不可用   | Role 字段未入库                       |
 | 水平扩展能力       | 🟡 受限     | 内存 Store 限制单节点                 |
 | Refresh Token 存储 | ✅ 已修复   | 已改为哈希后存储                      |
 | JWT 标准声明       | 🟡 不完整   | 缺少 iss / aud / jti                  |
@@ -299,7 +294,6 @@ func hashRefreshToken(plain string) string {
 └── 问题 5：client_secret 常量时间比较
 
 中期改进（架构迭代时）
-├── 问题 7：Role 字段持久化
 ├── 问题 8：StateStore/CodeStore 改为 Redis
 ├── 问题 10：JWT 添加 iss/aud/jti 声明
 └── 问题 11：实现 jti 黑名单支持 Access Token 撤销

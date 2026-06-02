@@ -49,7 +49,7 @@
 | POST | /api/v1/auth/login         | 登录，下发 access_token + refresh_token Cookie       |
 | POST | /api/v1/auth/logout        | 登出，吊销 refresh_token，清除两个 Cookie            |
 | POST | /api/v1/auth/refresh       | 用 refresh_token 换发新的 access_token（Token 轮换） |
-| GET  | /api/v1/auth/validate      | 校验 token，返回 id、role                            |
+| GET  | /api/v1/auth/validate      | 校验 token，返回 id、email                             |
 | GET  | /api/v1/auth/me            | 当前用户基本信息                                     |
 | POST | /api/v1/auth/token         | 授权码换 token（子应用后端，需 client_secret）       |
 | POST | /api/v1/auth/token-by-code | 授权码换 token（前端直连，无 client_secret）         |
@@ -388,7 +388,7 @@ axios.interceptors.response.use(null, async (error) => {
 ## 5) 校验 Token / 获取用户信息
 
 - **URL**: `GET /api/v1/auth/validate`
-- **说明**: 用于其他服务验证 JWT；成功返回用户 `id` 和 `role`。
+- **说明**: 用于其他服务验证 JWT；成功返回用户 `id` 和 `email`。
 
 ### Headers
 
@@ -402,7 +402,7 @@ axios.interceptors.response.use(null, async (error) => {
 ```json
 {
   "id": 123,
-  "role": "standard"
+  "email": "user@example.com"
 }
 ```
 
@@ -441,7 +441,6 @@ axios.interceptors.response.use(null, async (error) => {
   "id": 123,
   "username": "user@example.com",
   "email": "user@example.com",
-  "role": "standard",
   "created_at": "2025-01-15T08:00:00Z"
 }
 ```
