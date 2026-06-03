@@ -1,0 +1,203 @@
+{
+  "skill": "git-commit",
+  "version": "1.0.0",
+  "rubric": "../references/rubric.md",
+  "positive_cases": [
+    {
+      "id": "positive-001",
+      "input": "帮我写个 commit message",
+      "expected": "should_trigger"
+    },
+    {
+      "id": "positive-002",
+      "input": "给我生成一个 git commit",
+      "expected": "should_trigger"
+    },
+    {
+      "id": "positive-003",
+      "input": "git commit，帮我总结一下改动",
+      "expected": "should_trigger"
+    },
+    {
+      "id": "positive-004",
+      "input": "帮我写提交信息，我改了 auth 模块",
+      "expected": "should_trigger"
+    },
+    {
+      "id": "positive-005",
+      "input": "生成 commit message，这是 diff：...",
+      "expected": "should_trigger"
+    }
+  ],
+  "negative_cases": [
+    {
+      "id": "negative-001",
+      "input": "git commit 怎么回退？",
+      "expected": "should_not_trigger"
+    },
+    {
+      "id": "negative-002",
+      "input": "帮我审查一下这段代码",
+      "expected": "should_not_trigger"
+    },
+    {
+      "id": "negative-003",
+      "input": "git push 报错了怎么办",
+      "expected": "should_not_trigger"
+    },
+    {
+      "id": "negative-004",
+      "input": "帮我写一篇技术文档",
+      "expected": "should_not_trigger"
+    }
+  ],
+  "eval_cases": [
+    {
+      "id": "eval-01-feat-auth",
+      "name": "新增认证功能的 feat commit",
+      "difficulty": "easy",
+      "description": "用户在 auth 模块新增了 PKCE 保护功能，验证基本的 type/scope/subject 生成能力",
+      "input": {
+        "diff": "diff --git a/src/auth/oauth.js b/src/auth/oauth.js\n+// 新增 PKCE code_verifier 和 code_challenge 生成逻辑\n+function generateCodeVerifier() { ... }\n+function generateCodeChallenge(verifier) { ... }\n+// 授权码流程增加 code_challenge 参数\n-function authorizeUrl(clientId, redirectUri) {\n+function authorizeUrl(clientId, redirectUri, codeChallenge) {",
+        "files": ["src/auth/oauth.js"],
+        "description": "在 auth 模块新增了 PKCE 保护，完善了授权码流程"
+      },
+      "checks": {
+        "type_must_be": "feat",
+        "scope_should_contain": "auth",
+        "subject_must_contain": ["PKCE", "授权码"],
+        "format_check": "must_match_regex ^(feat|fix|chore|docs|refactor|temp)(\\([a-z][a-z0-9-]*\\))?: .+",
+        "no_fullwidth_colon": true,
+        "no_ending_punctuation": true,
+        "subject_length_range": [8, 30]
+      }
+    },
+    {
+      "id": "eval-02-chore-config",
+      "name": "配置变更的 chore commit",
+      "difficulty": "easy",
+      "description": "用户修改了环境配置文件，验证 chore type 的识别",
+      "input": {
+        "diff": "diff --git a/config/env.yaml b/config/env.yaml\n-API_BASE_URL: http://localhost:3000\n+API_BASE_URL: https://api.example.com\n-DEBUG: true\n+DEBUG: false",
+        "files": ["config/env.yaml"],
+        "description": "调整了环境配置，切换 API 地址并关闭调试模式"
+      },
+      "checks": {
+        "type_must_be": "chore",
+        "scope_should_contain": "config",
+        "subject_must_contain": ["环境", "配置"],
+        "format_check": "must_match_regex ^(feat|fix|chore|docs|refactor|temp)(\\([a-z][a-z0-9-]*\\))?: .+",
+        "no_fullwidth_colon": true,
+        "subject_length_range": [6, 30]
+      }
+    },
+    {
+      "id": "eval-03-fix-bug",
+      "name": "修复缺陷的 fix commit",
+      "difficulty": "easy",
+      "description": "用户修复了密码重置邮件的 bug，验证 fix type 和具体描述",
+      "input": {
+        "diff": "diff --git a/src/auth/reset-password.js b/src/auth/reset-password.js\n-  await sendEmail(user.email, resetToken);\n+  const sent = await sendEmail(user.email, resetToken);\n+  if (!sent) {\n+    logger.error('密码重置邮件发送失败', { userId: user.id });\n+    throw new EmailSendError('邮件发送失败，请稍后重试');\n+  }",
+        "files": ["src/auth/reset-password.js"],
+        "description": "修复了密码重置邮件发送失败时没有错误提示的问题"
+      },
+      "checks": {
+        "type_must_be": "fix",
+        "scope_should_contain": "auth",
+        "subject_must_contain": ["密码重置", "邮件"],
+        "format_check": "must_match_regex ^(feat|fix|chore|docs|refactor|temp)(\\([a-z][a-z0-9-]*\\))?: .+",
+        "no_ending_punctuation": true,
+        "subject_length_range": [8, 30]
+      }
+    },
+    {
+      "id": "eval-04-docs-no-scope",
+      "name": "纯文档更新（无 scope）",
+      "difficulty": "medium",
+      "description": "用户只更新了 README 文档，不涉及特定模块，scope 可省略",
+      "input": {
+        "diff": "diff --git a/README.md b/README.md\n+## API 接口文档\n+详见 [API 文档](./docs/api.md)\n-旧版说明\n+新版使用说明",
+        "files": ["README.md"],
+        "description": "更新了 README 文档中的使用说明和 API 文档链接"
+      },
+      "checks": {
+        "type_must_be": "docs",
+        "subject_must_contain": ["文档", "README"],
+        "format_check": "must_match_regex ^(feat|fix|chore|docs|refactor|temp)(\\([a-z][a-z0-9-]*\\))?: .+",
+        "no_ending_punctuation": true,
+        "scope_optional": true
+      }
+    },
+    {
+      "id": "eval-05-refactor-extract",
+      "name": "重构抽取逻辑",
+      "difficulty": "medium",
+      "description": "用户从 auth 模块抽取了 token 解析逻辑为独立函数，验证 refactor type",
+      "input": {
+        "diff": "diff --git a/src/auth/handler.js b/src/auth/handler.js\n-  // 内联的 token 解析逻辑被移除\n-  const payload = jwt.decode(token);\n-  ...\ndiff --git a/src/auth/token-parser.js b/src/auth/token-parser.js\n+export function parseToken(token) {\n+  return jwt.verify(token, SECRET);\n+}",
+        "files": ["src/auth/handler.js", "src/auth/token-parser.js"],
+        "description": "将 token 解析逻辑从 handler 中抽取为独立函数"
+      },
+      "checks": {
+        "type_must_be": "refactor",
+        "scope_should_contain": "auth",
+        "subject_must_contain": ["token", "抽取"],
+        "format_check": "must_match_regex ^(feat|fix|chore|docs|refactor|temp)(\\([a-z][a-z0-9-]*\\))?: .+",
+        "no_ending_punctuation": true,
+        "subject_length_range": [8, 30]
+      }
+    },
+    {
+      "id": "eval-06-multi-intent-warning",
+      "name": "多意图改动应提示拆分",
+      "difficulty": "hard",
+      "description": "用户一次改了不相关的三个模块，skill 应提示拆分为多个 commit",
+      "input": {
+        "diff": "diff --git a/src/auth/login.js b/src/auth/login.js\n+// 新增验证码校验\ndiff --git a/config/database.yaml b/config/database.yaml\n-max_connections: 10\n+max_connections: 50\ndiff --git a/docs/changelog.md b/docs/changelog.md\n+## v2.1.0 更新日志",
+        "files": ["src/auth/login.js", "config/database.yaml", "docs/changelog.md"],
+        "description": "同时改了登录验证码、数据库配置和更新日志"
+      },
+      "checks": {
+        "should_warn_split": true,
+        "split_count_suggestion": 3,
+        "must_mention": "建议拆分"
+      }
+    },
+    {
+      "id": "eval-07-typo-correction",
+      "name": "历史笔误纠偏",
+      "difficulty": "hard",
+      "description": "type 出现历史笔误（ath/doce/全角冒号），skill 应自动纠正",
+      "input": {
+        "diff": "diff --git a/src/auth/login.js b/src/auth/login.js\n+// 新增登录限流",
+        "files": ["src/auth/login.js"],
+        "description": "新增登录限流功能",
+        "force_bad_type": "ath"
+      },
+      "checks": {
+        "type_must_be": "feat",
+        "type_must_not_be": "ath",
+        "scope_should_contain": "auth",
+        "no_fullwidth_colon": true,
+        "format_check": "must_match_regex ^(feat|fix|chore|docs|refactor|temp)(\\([a-z][a-z0-9-]*\\))?: .+"
+      }
+    },
+    {
+      "id": "eval-08-english-term",
+      "name": "subject 中保留英文术语",
+      "difficulty": "medium",
+      "description": "改动涉及 CORS 和 API 等技术术语，subject 中可保留英文",
+      "input": {
+        "diff": "diff --git a/src/middleware/cors.js b/src/middleware/cors.js\n+  'Access-Control-Allow-Origin': '*',\n+  'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE',",
+        "files": ["src/middleware/cors.js"],
+        "description": "增加了 CORS 跨域请求头配置"
+      },
+      "checks": {
+        "type_must_be": "feat",
+        "subject_must_contain": ["CORS"],
+        "format_check": "must_match_regex ^(feat|fix|chore|docs|refactor|temp)(\\([a-z][a-z0-9-]*\\))?: .+",
+        "subject_length_range": [6, 30]
+      }
+    }
+  ]
+}
