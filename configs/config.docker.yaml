@@ -1,0 +1,27 @@
+# configs/config.docker.yaml — monai-infra / docker compose（库连接可由 DB_* 环境变量覆盖）
+server:
+  port: "8888"
+  jwt_secret: "change-me-to-a-strong-random-secret"
+  jwt_expiration_hours: 2
+  refresh_token_expiry_days: 7
+  auth_base_url: "http://localhost"
+  login_page_path: "/auth"
+  allowed_origins:
+    - "http://localhost"
+  allowed_redirect_uris: []
+  clients:
+    - client_id: mark-live
+      client_secret: "change-me-client-secret"
+      allowed_redirect_uris:
+        - "http://localhost/mark-live"
+    - client_id: knowledge-base
+      client_secret: "change-me-client-secret"
+      allowed_redirect_uris:
+        - "http://localhost"
+
+database:
+  host: "mysql"
+  port: "3306"
+  user: "root"
+  password: "admin123"
+  dbname: "identity_db"

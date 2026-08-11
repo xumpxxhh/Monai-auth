@@ -1,0 +1,31 @@
+# 接入 monai-infra：先启动 infra（monai_net、mysql、nginx），再在本目录执行 docker compose up -d
+# 网关路由见 refer/integration.md（/api/v1/auth、/static/ → auth:8888）
+
+services:
+  auth:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: monai-auth:latest
+    restart: unless-stopped
+    environment:
+      DB_HOST: mysql
+      DB_PORT: "3306"
+      DB_USER: root
+      DB_PASSWORD: ${MYSQL_ROOT_PASSWORD:-admin123}
+      DB_NAME: ${MYSQL_DATABASE:-identity_db}
+    volumes:
+      - auth_uploads:/app/uploads
+    networks:
+      - monai_net
+    # 经 monai-nginx 访问时可不映射；本地直连调试可取消注释：
+    # ports:
+    #   - "8888:8888"
+
+volumes:
+  auth_uploads:
+
+networks:
+  monai_net:
+    external: true
+    name: monai_net

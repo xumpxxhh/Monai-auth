@@ -1,0 +1,23 @@
+server:
+  port: "8888"
+  jwt_secret: "change-me-to-a-strong-random-secret"
+  jwt_expiration_hours: 2
+  refresh_token_expiry_days: 7
+  # 经 monai-nginx 对外访问时改为网关地址，例如 http://localhost
+  auth_base_url: "http://localhost:8888"
+  login_page_path: "/auth"
+  allowed_origins:
+    - "http://localhost:5173"
+  clients:
+    - client_id: "my-app"
+      client_secret: "change-me-client-secret"
+      allowed_redirect_uris:
+        - "http://localhost:5173"
+
+database:
+  # 接入 monai_net 时用 mysql；本机直接跑二进制时用 localhost
+  host: "mysql"
+  port: "3306"
+  user: "root"
+  password: "admin123"
+  dbname: "identity_db"
