@@ -6,7 +6,7 @@
 /auth-server
 auth-server-linux-amd64
 
-Linux 可执行文件（无扩展名的编译产物）
+# Linux 可执行文件（无扩展名的编译产物）
 /monaiauth
 /monaiauth_old
 *-linux-amd64
@@ -20,5 +20,10 @@ uploads/
 # 日志目录
 logs/
 
-# 配置目录
-configs/
+# 配置目录（保留可提交的示例配置）
+configs/*
+!configs/config.example.yaml
+!configs/config.docker.yaml
+
+# Docker 本地环境变量
+.env
