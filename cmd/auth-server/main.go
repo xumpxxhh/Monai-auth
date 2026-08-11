@@ -20,6 +20,11 @@ func main() {
 	viper.SetConfigType("yaml")
 	viper.AddConfigPath("./configs")
 	viper.AutomaticEnv()
+	_ = viper.BindEnv("database.host", "DB_HOST")
+	_ = viper.BindEnv("database.port", "DB_PORT")
+	_ = viper.BindEnv("database.user", "DB_USER")
+	_ = viper.BindEnv("database.password", "DB_PASSWORD")
+	_ = viper.BindEnv("database.dbname", "DB_NAME")
 	if err := viper.ReadInConfig(); err != nil {
 		log.Fatalf("Error reading config file: %v", err)
 	}

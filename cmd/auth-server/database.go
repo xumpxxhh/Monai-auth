@@ -24,9 +24,9 @@ func initDB(cfg Config) *gorm.DB {
 	if err != nil {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}
-	if err := db.AutoMigrate(&userrepo.RefreshTokenGORM{}); err != nil {
-		log.Fatalf("Failed to migrate refresh_tokens table: %v", err)
+	if err := db.AutoMigrate(&userrepo.UserGORM{}, &userrepo.RefreshTokenGORM{}); err != nil {
+		log.Fatalf("Failed to migrate database schema: %v", err)
 	}
-	log.Println("Database connection successful.")
+	log.Println("Database connection successful; schema ready.")
 	return db
 }
